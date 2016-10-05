@@ -8,79 +8,10 @@
 
 import Foundation
 
-// Grammar
-// s : '(' s ')' | e
-// i.e, ( ), (( ))
-
-func match(expr input: Array<Character>) -> Int? {
-    var index = 0;
-    var r: Bool = false
-    
-    func advanceAndCheck(expected: Character) -> Bool {
-//        var backtrack = index
-        
-        if input.count == index {
-            return false
-        }
-        let result = input[index] == expected
-        
-        if result {
-            index += 1
-        } else {
-//            backtrack = index
-        }
-        
-        return result
-    }
-
-    // s : '(' s ')' | e
-    func s() -> Bool {
-//        var backtrack = index
-        
-        let first = advanceAndCheck(expected: "(") && s() && advanceAndCheck(expected: ")")
-        if input.count == index {
-            
-            if !first {
-                return false
-            }
-            
-            return r
-        }
-        
-        let second = input[index] == " ".characters.first!
-        
-        if second {
-            index += 1
-        } else {
-//            backtrack = index
-        }
-        
-        if first {
-            r = first
-        }
-        
-        if !first && second {
-            r = second
-        }
-            
-//        print(r)
-        
-        return r
-    }
-    
-    if s() {
-        return index
-    }
-    
-    return nil;
-}
-
 //print("Let's parse: ")
 let chars = Array(readLine()!.characters)
 
 //print("Exiting status: \(match(expr: chars))")
-
-
 
 public class TreeNode<T> {
     public var value: T
@@ -119,74 +50,85 @@ var tree: TreeNode<Character>?
  
  */
 
+enum ParsingError: Error {
+    case invalidInput(expecting: String)
+    case missingCharacter(missing: String)
+}
+
 public func parse(expr input: Array<Character>) -> Bool {
     
-    func num() -> Bool {
+    func num() -> TreeNode<Character>? {
+        var node: TreeNode<Character>? = nil
         let result =  (Int(input[index].description) != nil)
         
         if result {
-            let node = TreeNode(value: input[index])
-            tree?.append(child: node)
+            node = TreeNode(value: input[index])
 
             index += 1
         }
         
-        return result
+        return node
     }
     
-    func spc() -> Bool {
+    func spc() -> TreeNode<Character>? {
+        var node: TreeNode<Character>? = nil
         let result = input[index].description == " "
         
         if result {
+            node = TreeNode(value: input[index])
             index += 1
         }
         
-        return result
+        return node
     }
     
-    func op() -> Bool {
+    func op() -> TreeNode<Character>? {
+        var node: TreeNode<Character>? = nil
+        
         switch input[index] {
-        case "+":
-            if tree == nil {
-                tree = TreeNode(value: input[index])
-            } else {
-                let node = TreeNode(value: input[index])
-                tree?.append(child: node)
-            }
+        case "-", "+":
+            node = TreeNode(value: input[index])
             
             index += 1
             
-            return true
-        case "-":
-            if tree == nil {
-                tree = TreeNode(value: input[index])
-            } else {
-                let node = TreeNode(value: input[index])
-                tree?.append(child: node)
-            }
-            
-            index += 1
-            return true
+            return node
         default:
-            return false
+            return node
         }
     }
     
     
-    func form() -> Bool {
+    func form() -> TreeNode<Character>? {
         
         let p1 = hasChar("(")
         if !p1 {
-            return false
+            return nil
         }
-        let r1 = op()
-        let r2 = spc()
-        let r3 = expr()
-        let r4 = spc()
-        let r5 = expr()
+        
+        let opNode = op()
+        let spcNode1 = spc()
+        let exprNode1 = expr()
+        let spcNode2 = spc()
+        let exprNode2 = expr()
+        
+        let r1 = opNode != nil
+        let r2 = spcNode1 != nil
+        let r3 = exprNode1 != nil
+        let r4 = spcNode2 != nil
+        let r5 = exprNode2 != nil
         let p2 = hasChar(")")
             
-        return p1 && r1 && r2 && r3 && r4 && r5 && p2
+        if !(p1 && r1 && r2 && r3 && r4 && r5 && p2) {
+            return nil
+        }
+         // Building tree
+        let tree = opNode!
+        exprNode1!.parent = tree
+        tree.append(child: exprNode1!)
+        exprNode2!.parent = tree
+        tree.append(child: exprNode2!)
+        
+        return tree
     }
 
     func hasChar(_ exptected: Character) -> Bool {
@@ -199,7 +141,7 @@ public func parse(expr input: Array<Character>) -> Bool {
         return has
     }
     
-    func expr() -> Bool {
+    func expr() -> TreeNode<Character>? {
         print("Index at: \(index)")
         let firstExpr = form()
         // It's over
@@ -209,22 +151,24 @@ public func parse(expr input: Array<Character>) -> Bool {
         
         let secondExpr = num()
         
-        if firstExpr {
+        if firstExpr != nil {
             return firstExpr
         }
         
-        if secondExpr {
+        if secondExpr != nil {
             return secondExpr
         }
         
-        return false
+        return nil
     }
     
     index = 0
-    return expr()
+    let tree = expr()
+    print(tree)
+    return tree != nil
 }
 
-print("Exiting status: \(parse(expr: chars))")
+print("Parsing: \(parse(expr: chars))")
 
-print(tree)
+
 
