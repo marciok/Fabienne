@@ -39,8 +39,7 @@ extension TreeNode: CustomStringConvertible {
 }
 
 
-var index = 0;
-var tree: TreeNode<Character>?
+
 /*
  expr: form | num
  form: '(' op spc expr spc expr ')'
@@ -55,120 +54,132 @@ enum ParsingError: Error {
     case missingCharacter(missing: String)
 }
 
-public func parse(expr input: Array<Character>) -> Bool {
+struct Parser {
     
-    func num() -> TreeNode<Character>? {
-        var node: TreeNode<Character>? = nil
-        let result =  (Int(input[index].description) != nil)
+    var tree: TreeNode<Character>?
+    var input: [Character]
+    var index = 0
         
-        if result {
-            node = TreeNode(value: input[index])
-
-            index += 1
-        }
-        
-        return node
+    init(input: [Character]) {
+        self.input = input
     }
     
-    func spc() -> TreeNode<Character>? {
-        var node: TreeNode<Character>? = nil
-        let result = input[index].description == " "
+    mutating func num() throws -> TreeNode<Character> {
+        let result = (Int(peekCurrentChar().description) != nil)
         
-        if result {
-            node = TreeNode(value: input[index])
-            index += 1
+        if !result {
+            throw ParsingError.invalidInput(expecting: "expecting number")
         }
         
-        return node
+        return TreeNode(value: peekCurrentChar())
     }
     
-    func op() -> TreeNode<Character>? {
-        var node: TreeNode<Character>? = nil
+    mutating func spc() throws -> TreeNode<Character> {
+        let result = peekCurrentChar().description == " "
         
-        switch input[index] {
-        case "-", "+":
-            node = TreeNode(value: input[index])
+        if !result {
+            throw ParsingError.invalidInput(expecting: "expecting empty space")
+        }
+        
+        return TreeNode(value: peekCurrentChar())
+    }
+    
+    mutating func op() throws -> TreeNode<Character> {
+        
+        switch peekCurrentChar() {
+        case Character("-"), Character("+"):
             
-            index += 1
-            
-            return node
+            return TreeNode(value: peekCurrentChar())
         default:
-            return node
+            throw ParsingError.invalidInput(expecting: "expecting operator: +, -")
         }
     }
     
-    
-    func form() -> TreeNode<Character>? {
+    mutating func form() throws -> TreeNode<Character> {
         
-        let p1 = hasChar("(")
-        if !p1 {
-            return nil
+        _ = popCurrentToken() // Removing '('
+        
+        let opNode = try op()
+        _ = popCurrentToken() // Removing '+ or -'
+        
+        _ = try spc()
+        _ = popCurrentToken() // Removing ' '
+        
+        let exprNode1 = try expr()
+        
+        _ = try spc()
+        _ = popCurrentToken() // Removing ' '
+        
+        let exprNode2 = try expr()
+        
+        if peekCurrentChar() == Character(")") {
+            _ = popCurrentToken() // Removing number or expression    
+        } else {
+            throw ParsingError.missingCharacter(missing: ")")
         }
         
-        let opNode = op()
-        let spcNode1 = spc()
-        let exprNode1 = expr()
-        let spcNode2 = spc()
-        let exprNode2 = expr()
-        
-        let r1 = opNode != nil
-        let r2 = spcNode1 != nil
-        let r3 = exprNode1 != nil
-        let r4 = spcNode2 != nil
-        let r5 = exprNode2 != nil
-        let p2 = hasChar(")")
-            
-        if !(p1 && r1 && r2 && r3 && r4 && r5 && p2) {
-            return nil
-        }
-         // Building tree
-        let tree = opNode!
-        exprNode1!.parent = tree
-        tree.append(child: exprNode1!)
-        exprNode2!.parent = tree
-        tree.append(child: exprNode2!)
+        // Building tree
+        let tree = opNode
+        exprNode1.parent = tree
+        tree.append(child: exprNode1)
+        exprNode2.parent = tree
+        tree.append(child: exprNode2)
         
         return tree
     }
-
-    func hasChar(_ exptected: Character) -> Bool {
-        let has = exptected.description == input[index].description
+    
+    mutating func expr() throws -> TreeNode<Character> {
+        let currentChar = peekCurrentChar()
         
-        if has {
-            index += 1
+        if currentChar == Character("(") {
+            return try form()
+        } else if Int(currentChar.description) != nil {
+            let numParsed = try num()
+            popCurrentToken()
+            return numParsed
+        } else {
+            throw ParsingError.invalidInput(expecting: "not able to parse expression")
         }
-        
-        return has
     }
     
-    func expr() -> TreeNode<Character>? {
-        print("Index at: \(index)")
-        let firstExpr = form()
-        // It's over
-        if input.count == index {
-            return firstExpr
-        }
-        
-        let secondExpr = num()
-        
-        if firstExpr != nil {
-            return firstExpr
-        }
-        
-        if secondExpr != nil {
-            return secondExpr
-        }
-        
-        return nil
+    func peekCurrentChar() -> Character {
+        return input[index]
     }
     
-    index = 0
-    let tree = expr()
-    print(tree)
-    return tree != nil
+    mutating func popCurrentToken() -> Character {
+        let char = input[index]
+        index += 1
+        
+        return char
+    }
+    
+    public mutating func parse() throws -> TreeNode<Character> {
+        index = 0
+        var nodes = TreeNode(value: Character(" "))
+        
+        while index < input.count {
+            nodes = try expr()
+        }
+        
+        return nodes
+    }
 }
 
-print("Parsing: \(parse(expr: chars))")
+var parser = Parser(input: chars)
+
+do {
+    let result = try parser.parse()
+    print("Parsing Result: \(result)")
+} catch let error as ParsingError {
+    
+    switch error {
+    case .invalidInput:
+        print("Invalid input: \(error)")
+    case .missingCharacter:
+        print("Missing Character: \(error)")
+    }
+}
+
 
 
 
