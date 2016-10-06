@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "577C0FDF1D9C59CD005B7B06"
-               BuildableName = "RecursiveDescentParser"
-               BlueprintName = "RecursiveDescentParser"
-               ReferencedContainer = "container:RecursiveDescentParser.xcodeproj">
+               BuildableName = "Fabienne"
+               BlueprintName = "Fabienne"
+               ReferencedContainer = "container:Fabienne.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "576B777A1D9D997400AFC611"
                BuildableName = "Tests.xctest"
                BlueprintName = "Tests"
-               ReferencedContainer = "container:RecursiveDescentParser.xcodeproj">
+               ReferencedContainer = "container:Fabienne.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "577C0FDF1D9C59CD005B7B06"
-            BuildableName = "RecursiveDescentParser"
-            BlueprintName = "RecursiveDescentParser"
-            ReferencedContainer = "container:RecursiveDescentParser.xcodeproj">
+            BuildableName = "Fabienne"
+            BlueprintName = "Fabienne"
+            ReferencedContainer = "container:Fabienne.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "577C0FDF1D9C59CD005B7B06"
-            BuildableName = "RecursiveDescentParser"
-            BlueprintName = "RecursiveDescentParser"
-            ReferencedContainer = "container:RecursiveDescentParser.xcodeproj">
+            BuildableName = "Fabienne"
+            BlueprintName = "Fabienne"
+            ReferencedContainer = "container:Fabienne.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -85,9 +85,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "577C0FDF1D9C59CD005B7B06"
-            BuildableName = "RecursiveDescentParser"
-            BlueprintName = "RecursiveDescentParser"
-            ReferencedContainer = "container:RecursiveDescentParser.xcodeproj">
+            BuildableName = "Fabienne"
+            BlueprintName = "Fabienne"
+            ReferencedContainer = "container:Fabienne.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

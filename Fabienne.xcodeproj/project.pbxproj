@@ -7,9 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		576B777E1D9D997400AFC611 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576B777D1D9D997400AFC611 /* Tests.swift */; };
+		576A5A241DA6CD0C00F56D91 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A231DA6CD0C00F56D91 /* Parser.swift */; };
+		576A5A251DA6CE3700F56D91 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A231DA6CD0C00F56D91 /* Parser.swift */; };
+		576A5A271DA6CE7700F56D91 /* InterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A261DA6CE7700F56D91 /* InterpreterTests.swift */; };
+		576A5A291DA6D0D800F56D91 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A281DA6D0D800F56D91 /* Interpreter.swift */; };
+		576A5A2B1DA6D12500F56D91 /* ASTNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A2A1DA6D12500F56D91 /* ASTNode.swift */; };
+		576A5A2C1DA6D1AE00F56D91 /* ASTNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A2A1DA6D12500F56D91 /* ASTNode.swift */; };
+		576A5A2D1DA6D91F00F56D91 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A281DA6D0D800F56D91 /* Interpreter.swift */; };
+		576B777E1D9D997400AFC611 /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576B777D1D9D997400AFC611 /* ParserTests.swift */; };
 		577C0FE41D9C59CE005B7B06 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577C0FE31D9C59CE005B7B06 /* main.swift */; };
-		57B7FEA41D9D9F5100FB9627 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577C0FE31D9C59CE005B7B06 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,11 +31,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		576A5A231DA6CD0C00F56D91 /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
+		576A5A261DA6CE7700F56D91 /* InterpreterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterpreterTests.swift; sourceTree = "<group>"; };
+		576A5A281DA6D0D800F56D91 /* Interpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Interpreter.swift; path = RecursiveDescentParser/Interpreter.swift; sourceTree = "<group>"; };
+		576A5A2A1DA6D12500F56D91 /* ASTNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ASTNode.swift; sourceTree = "<group>"; };
 		576B777B1D9D997400AFC611 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		576B777D1D9D997400AFC611 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
+		576B777D1D9D997400AFC611 /* ParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserTests.swift; sourceTree = "<group>"; };
 		576B777F1D9D997400AFC611 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		577C0FE01D9C59CE005B7B06 /* RecursiveDescentParser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RecursiveDescentParser; sourceTree = BUILT_PRODUCTS_DIR; };
-		577C0FE31D9C59CE005B7B06 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		577C0FE01D9C59CE005B7B06 /* Fabienne */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Fabienne; sourceTree = BUILT_PRODUCTS_DIR; };
+		577C0FE31D9C59CE005B7B06 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = main.swift; path = RecursiveDescentParser/main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,11 +60,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		576A5A221DA6CCCF00F56D91 /* Interpreter */ = {
+			isa = PBXGroup;
+			children = (
+				576A5A281DA6D0D800F56D91 /* Interpreter.swift */,
+			);
+			name = Interpreter;
+			sourceTree = "<group>";
+		};
 		576B777C1D9D997400AFC611 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				576B777D1D9D997400AFC611 /* Tests.swift */,
+				576B777D1D9D997400AFC611 /* ParserTests.swift */,
 				576B777F1D9D997400AFC611 /* Info.plist */,
+				576A5A261DA6CE7700F56D91 /* InterpreterTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -62,26 +81,30 @@
 		577C0FD71D9C59CD005B7B06 = {
 			isa = PBXGroup;
 			children = (
-				577C0FE21D9C59CE005B7B06 /* RecursiveDescentParser */,
+				576A5A221DA6CCCF00F56D91 /* Interpreter */,
+				577C0FE21D9C59CE005B7B06 /* Parser */,
 				576B777C1D9D997400AFC611 /* Tests */,
 				577C0FE11D9C59CE005B7B06 /* Products */,
+				577C0FE31D9C59CE005B7B06 /* main.swift */,
 			);
 			sourceTree = "<group>";
 		};
 		577C0FE11D9C59CE005B7B06 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				577C0FE01D9C59CE005B7B06 /* RecursiveDescentParser */,
+				577C0FE01D9C59CE005B7B06 /* Fabienne */,
 				576B777B1D9D997400AFC611 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		577C0FE21D9C59CE005B7B06 /* RecursiveDescentParser */ = {
+		577C0FE21D9C59CE005B7B06 /* Parser */ = {
 			isa = PBXGroup;
 			children = (
-				577C0FE31D9C59CE005B7B06 /* main.swift */,
+				576A5A231DA6CD0C00F56D91 /* Parser.swift */,
+				576A5A2A1DA6D12500F56D91 /* ASTNode.swift */,
 			);
+			name = Parser;
 			path = RecursiveDescentParser;
 			sourceTree = "<group>";
 		};
@@ -105,9 +128,9 @@
 			productReference = 576B777B1D9D997400AFC611 /* Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		577C0FDF1D9C59CD005B7B06 /* RecursiveDescentParser */ = {
+		577C0FDF1D9C59CD005B7B06 /* Fabienne */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 577C0FE71D9C59CE005B7B06 /* Build configuration list for PBXNativeTarget "RecursiveDescentParser" */;
+			buildConfigurationList = 577C0FE71D9C59CE005B7B06 /* Build configuration list for PBXNativeTarget "Fabienne" */;
 			buildPhases = (
 				577C0FDC1D9C59CD005B7B06 /* Sources */,
 				577C0FDD1D9C59CD005B7B06 /* Frameworks */,
@@ -117,9 +140,9 @@
 			);
 			dependencies = (
 			);
-			name = RecursiveDescentParser;
+			name = Fabienne;
 			productName = RecursiveDescentParser;
-			productReference = 577C0FE01D9C59CE005B7B06 /* RecursiveDescentParser */;
+			productReference = 577C0FE01D9C59CE005B7B06 /* Fabienne */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -142,7 +165,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 577C0FDB1D9C59CD005B7B06 /* Build configuration list for PBXProject "RecursiveDescentParser" */;
+			buildConfigurationList = 577C0FDB1D9C59CD005B7B06 /* Build configuration list for PBXProject "Fabienne" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -154,7 +177,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				577C0FDF1D9C59CD005B7B06 /* RecursiveDescentParser */,
+				577C0FDF1D9C59CD005B7B06 /* Fabienne */,
 				576B777A1D9D997400AFC611 /* Tests */,
 			);
 		};
@@ -175,8 +198,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57B7FEA41D9D9F5100FB9627 /* main.swift in Sources */,
-				576B777E1D9D997400AFC611 /* Tests.swift in Sources */,
+				576A5A2D1DA6D91F00F56D91 /* Interpreter.swift in Sources */,
+				576A5A2C1DA6D1AE00F56D91 /* ASTNode.swift in Sources */,
+				576A5A251DA6CE3700F56D91 /* Parser.swift in Sources */,
+				576A5A271DA6CE7700F56D91 /* InterpreterTests.swift in Sources */,
+				576B777E1D9D997400AFC611 /* ParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,6 +210,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				576A5A291DA6D0D800F56D91 /* Interpreter.swift in Sources */,
+				576A5A241DA6CD0C00F56D91 /* Parser.swift in Sources */,
+				576A5A2B1DA6D12500F56D91 /* ASTNode.swift in Sources */,
 				577C0FE41D9C59CE005B7B06 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,7 +366,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		577C0FDB1D9C59CD005B7B06 /* Build configuration list for PBXProject "RecursiveDescentParser" */ = {
+		577C0FDB1D9C59CD005B7B06 /* Build configuration list for PBXProject "Fabienne" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				577C0FE51D9C59CE005B7B06 /* Debug */,
@@ -346,7 +375,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		577C0FE71D9C59CE005B7B06 /* Build configuration list for PBXNativeTarget "RecursiveDescentParser" */ = {
+		577C0FE71D9C59CE005B7B06 /* Build configuration list for PBXNativeTarget "Fabienne" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				577C0FE81D9C59CE005B7B06 /* Debug */,

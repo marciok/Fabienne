@@ -19,7 +19,7 @@
                BlueprintIdentifier = "576B777A1D9D997400AFC611"
                BuildableName = "Tests.xctest"
                BlueprintName = "Tests"
-               ReferencedContainer = "container:RecursiveDescentParser.xcodeproj">
+               ReferencedContainer = "container:Fabienne.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
