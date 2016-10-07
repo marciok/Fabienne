@@ -37,7 +37,7 @@ class InterpreterTests: XCTestCase {
         left.append(child: left1stChild)
         left.append(child: left2ndChild)
         
-        let result = try!  Interpreter.eval(tree)
+        let result = try! Interpreter.eval(tree)
         
         XCTAssertTrue(expectedResult == result)
     }

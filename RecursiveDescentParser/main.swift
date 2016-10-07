@@ -8,15 +8,12 @@
 
 import Foundation
 
-//print("Let's parse: ")
-let chars = Array(readLine()!.characters)
-
-//print("Exiting status: \(match(expr: chars))")
+let chars = Array(readLine()!.characters) // TODO: Remove
+var tokens = Lexer.tokenize(string: readLine()!)
 
 var parser = Parser(input: chars)
 let ast = try parser.parse()
 print(try! Interpreter.eval(ast!))
-
 
 
 
