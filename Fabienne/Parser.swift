@@ -11,9 +11,9 @@
  Grammar:
  expr -> form | num
  form -> '(' op spc expr spc expr ')'
- op -> [+-]
- num -> [0..9]
- spc -> " "
+ op   -> [+-]
+ num  -> [0..9]
+ spc  -> " "
  */
 
 import Foundation

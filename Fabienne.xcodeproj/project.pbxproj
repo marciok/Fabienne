@@ -16,6 +16,8 @@
 		575C52FE1DABD6070069EF9B /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F71DABD5A80069EF9B /* Parser.swift */; };
 		575C53001DABDFD00069EF9B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52FF1DABDFD00069EF9B /* Lexer.swift */; };
 		575C53021DABDFDB0069EF9B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
+		575C53041DABE0C10069EF9B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52FF1DABDFD00069EF9B /* Lexer.swift */; };
+		575C53051DABE0D20069EF9B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
 		576A5A271DA6CE7700F56D91 /* InterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576A5A261DA6CE7700F56D91 /* InterpreterTests.swift */; };
 		576B777E1D9D997400AFC611 /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576B777D1D9D997400AFC611 /* ParserTests.swift */; };
 		576F57301DA7DEA900421112 /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F572F1DA7DEA900421112 /* LexerTests.swift */; };
@@ -223,7 +225,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				575C53051DABE0D20069EF9B /* StringExtensions.swift in Sources */,
 				575C52FC1DABD6020069EF9B /* Interpreter.swift in Sources */,
+				575C53041DABE0C10069EF9B /* Lexer.swift in Sources */,
 				575C52FD1DABD6040069EF9B /* ASTNode.swift in Sources */,
 				575C52FE1DABD6070069EF9B /* Parser.swift in Sources */,
 				576A5A271DA6CE7700F56D91 /* InterpreterTests.swift in Sources */,
