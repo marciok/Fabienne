@@ -27,7 +27,13 @@ public enum Token {
             return String(num)
         }
     }
+    
+    static func ==(lhs: Token, rhs: Token) -> Bool {
+        return lhs.rawValue() == rhs.rawValue()
+    }
 }
+
+
 
 typealias TokenGenerator = (String) -> Token?
 
