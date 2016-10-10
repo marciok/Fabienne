@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias ASTNode = TreeNode<Character>
+public typealias ASTNode = TreeNode<Token>
 
 public class TreeNode<T> {
     public var value: T

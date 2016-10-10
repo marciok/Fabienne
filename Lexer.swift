@@ -13,6 +13,20 @@ public enum Token {
     case parensClose
     case other(String)
     case number(Int)
+    
+    func rawValue() -> String {
+        
+        switch self {
+        case .parensOpen:
+            return "("
+        case .parensClose:
+            return ")"            
+        case .other(let op):
+            return op
+        case .number(let num):
+            return String(num)
+        }
+    }
 }
 
 typealias TokenGenerator = (String) -> Token?

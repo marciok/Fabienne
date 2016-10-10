@@ -17,15 +17,15 @@ public struct Interpreter {
         let val = tree.value
     
         if  tree.children.isEmpty {
-            return Int(val.description)!
+            return Int(val.rawValue())!
         }
         switch val {
-        case Character("+"):
+        case .other("+"):
             let firstNumber = try eval(tree.children.first!)
             let secondNumber = try eval(tree.children.last!)
     
             return firstNumber + secondNumber
-        case Character("-"):
+        case .other("-"):
             let firstNumber = try eval(tree.children.first!)
             let secondNumber = try eval(tree.children.last!)
             

@@ -8,10 +8,9 @@
 
 import Foundation
 
-let chars = Array(readLine()!.characters) // TODO: Remove
 var tokens = Lexer.tokenize(string: readLine()!)
 
-var parser = Parser(input: chars)
+var parser = Parser(tokens: tokens)
 let ast = try parser.parse()
 print(try! Interpreter.eval(ast!))
 
