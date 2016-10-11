@@ -17,6 +17,12 @@ struct Parser {
     var tree: ASTNode?
     var tokens: [Token]
     var index = 0
+    let operatorPrecedence: [String: Int] = [
+        "+": 20,
+        "-": 20,
+        "*": 40,
+        // "/": 40 //TODO
+    ]
     
     init(tokens: [Token]) {
         self.tokens = tokens
@@ -42,7 +48,7 @@ struct Parser {
             
             return TreeNode(value: popCurrentToken())
         default:
-            throw ParsingError.invalidTokens(expecting: "Expecting operator: +, -")
+            throw ParsingError.invalidTokens(expecting: "Expecting operator: +, -, *")
         }
     }
     
