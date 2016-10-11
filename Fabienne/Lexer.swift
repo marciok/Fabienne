@@ -31,6 +31,10 @@ public enum Token {
     static func ==(lhs: Token, rhs: Token) -> Bool {
         return lhs.rawValue() == rhs.rawValue()
     }
+    
+    static func !=(lhs: Token, rhs: Token) -> Bool {
+        return !(lhs == rhs)
+    }
 }
 
 

@@ -7,14 +7,7 @@
 //
 
 
-/*
- Grammar:
- expr -> form | num
- form -> '(' op spc expr spc expr ')'
- op   -> [+-]
- num  -> [0..9]
- spc  -> " "
- */
+
 
 import Foundation
 
@@ -34,7 +27,7 @@ struct Parser {
         self.tokens = tokens
     }
     
-    mutating func num() throws -> ASTNode {
+    mutating func number() throws -> ASTNode {
         
         switch try peekCurrentToken() {
         case .number:
@@ -46,55 +39,69 @@ struct Parser {
         }
     }
     
-    mutating func op() throws -> ASTNode {
-        
+    mutating func binaryOperator() throws -> ASTNode {
         switch try peekCurrentToken() {
         case .other("-"),
              .other("+"):
             
             return TreeNode(value: popCurrentToken())
         default:
-            throw ParsingError.invalidTokens(expecting: "Expected operator: +, -")
+            throw ParsingError.invalidTokens(expecting: "Expecting operator: +, -")
         }
     }
     
-    mutating func form() throws -> ASTNode {
+    /// (binaryOperator primaryExpression)*
+    mutating func binaryExpression(_ lhs: ASTNode) throws -> ASTNode {
         
-        _ = popCurrentToken() // Removing '('
-        
-        let opNode = try op()
-        
-        let exprNode1 = try expr()
-        
-        let exprNode2 = try expr()
-        
-        switch try peekCurrentToken() {
-        case .parensClose:
-            _ = popCurrentToken()
-            break
-        default:
-            throw ParsingError.invalidTokens(expecting: ")")
+        if index >= tokens.count {
+            return lhs
         }
         
-        // Building tree
-        let tree = opNode
-        tree.append(child: exprNode1)
-        tree.append(child: exprNode2)
+        if try peekCurrentToken() == Token.parensClose {
+            return lhs
+        }
         
-        return tree
+        let binOpNodeFetched = try binaryOperator()
+        
+        binOpNodeFetched.append(child: lhs)
+        
+        let rhs = try primaryExpression()
+    
+        binOpNodeFetched.append(child: rhs)
+        
+        return try binaryExpression(binOpNodeFetched)
     }
     
-    mutating func expr() throws -> ASTNode {
+    /// primaryExpression -> number | '(' expression ')'
+    mutating func primaryExpression() throws -> ASTNode {
         let currentToken = try peekCurrentToken()
         
         switch currentToken {
         case .parensOpen:
-            return try form()
+            _ = popCurrentToken() // Removing '('
+            let expressionNode = try expression()
+            
+            
+            if index >= tokens.count {
+                throw ParsingError.inclompleteExpression
+            }
+            _ = popCurrentToken() // Removing ')'
+            
+            return expressionNode
         case .number:
-            return try num()
+            return try number()
         default:
-            throw ParsingError.invalidTokens(expecting: "not able to parse expression")
+            throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
         }
+    }
+    
+    /// expression -> [primaryExpression (binaryOperator primaryExpression)* ];
+    mutating func expression() throws -> ASTNode {
+        
+        let primaryExprNode = try primaryExpression()
+        let binaryOpNode = try binaryExpression(primaryExprNode)
+        
+        return binaryOpNode
     }
     
     func peekCurrentToken() throws -> Token {
@@ -113,11 +120,20 @@ struct Parser {
         return token
     }
     
+    
+    /**
+     Grammar:
+     expression -> [primaryExpression (binaryOperator primaryExpression)* ];
+     primaryExpression -> [number | '(' expression ')']
+     binaryOperator   -> [+-]
+     number -> [0..9]
+     
+     **/
     public mutating func parse() throws -> ASTNode? {
-        var nodes: ASTNode? = nil
+        var nodes: ASTNode? = nil //TODO: Remove optional
         
         while index < tokens.count {
-            nodes = try expr()
+            nodes = try expression()
         }
         
         return nodes
