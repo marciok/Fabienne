@@ -24,6 +24,20 @@ class InterpreterTests: XCTestCase {
         XCTAssertTrue(expectedResult == result)
     }
     
+    func testResultOfExpressionMultplication() {
+        let expectedResult = 6
+        let tree = TreeNode.init(value: Token.other("*"))
+        let left = TreeNode.init(value: Token.number(3))
+        let right = TreeNode.init(value: Token.number(2))
+        
+        tree.append(child: left)
+        tree.append(child: right)
+        
+        let result = try! Interpreter.eval(tree)
+        
+        XCTAssertTrue(expectedResult == result)
+    }
+    
     func testResultOfLongExpression() {
         let expectedResult = 5
         let tree = TreeNode.init(value: Token.other("+"))

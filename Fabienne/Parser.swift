@@ -5,12 +5,7 @@
 //  Created by Marcio Klepacz on 10/6/16.
 //  Copyright © 2016 Marcio Klepacz. All rights reserved.
 //
-
-
-
-
 import Foundation
-
 
 public enum ParsingError: Error {
     case invalidTokens(expecting: String)
@@ -42,6 +37,7 @@ struct Parser {
     mutating func binaryOperator() throws -> ASTNode {
         switch try peekCurrentToken() {
         case .other("-"),
+             .other("*"),
              .other("+"):
             
             return TreeNode(value: popCurrentToken())

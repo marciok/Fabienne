@@ -84,6 +84,21 @@ class ParserTests: XCTestCase {
         XCTAssert(String(describing: root) == String(describing: tree!))
     }
     
+    func test_multiplication()  {
+        let tokens: [Token] = [.number(3), .other("*"), .number(2)]
+        
+        let root = TreeNode(value: Token.other("*"))
+        let left = TreeNode(value: Token.number(3))
+        let right = TreeNode(value: Token.number(2))
+        root.append(child: left)
+        root.append(child: right)
+        
+        var parser = Parser(tokens: tokens)
+        let tree = try! parser.parse()
+        
+        XCTAssert(String(describing: root) == String(describing: tree!))
+    }
+    
     func test_invalidInputNoNumbers() {
         let tokens: [Token] = [.parensOpen, .number(1), .other("+"), .number(2)]
         var expectedError: Error? = nil

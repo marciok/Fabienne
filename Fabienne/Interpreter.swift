@@ -30,6 +30,12 @@ public struct Interpreter {
             let secondNumber = try eval(tree.children.last!)
             
             return firstNumber - secondNumber
+            
+        case .other("*"):
+            let firstNumber = try eval(tree.children.first!)
+            let secondNumber = try eval(tree.children.last!)
+            
+            return firstNumber * secondNumber
         default:
             throw InterpreterError.undefinedToken
         }
