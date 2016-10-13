@@ -9,7 +9,7 @@ import Foundation
 
 public enum ParsingError: Error {
     case invalidTokens(expecting: String)
-    case inclompleteExpression
+    case incompleteExpression
 }
 
 struct Parser {
@@ -21,7 +21,7 @@ struct Parser {
         "+": 20,
         "-": 20,
         "*": 40,
-        // "/": 40 //TODO
+        "/": 40
     ]
     
     init(tokens: [Token]) {
@@ -44,34 +44,58 @@ struct Parser {
         switch try peekCurrentToken() {
         case .other("-"),
              .other("*"),
+             .other("/"),
              .other("+"):
             
             return TreeNode(value: popCurrentToken())
         default:
-            throw ParsingError.invalidTokens(expecting: "Expecting operator: +, -, *")
+            throw ParsingError.invalidTokens(expecting: "Expecting operator")
         }
     }
     
-    /// (binaryOperator primaryExpression)*
-    mutating func binaryExpression(_ lhs: ASTNode) throws -> ASTNode {
-        
-        if index >= tokens.count {
-            return lhs
+    func getCurrentTokenPrecedence() throws -> Int {
+        guard index < tokens.count else {
+            return -1
         }
         
-        if try peekCurrentToken() == Token.parensClose {
-            return lhs
+        guard case let Token.other(op) = try peekCurrentToken() else {
+            return -1
         }
         
-        let binOpNodeFetched = try binaryOperator()
+        guard let precedence = operatorPrecedence[op] else {
+            throw ParsingError.invalidTokens(expecting: "some operator")
+        }
         
-        binOpNodeFetched.append(child: lhs)
-        
-        let rhs = try primaryExpression()
+        return precedence
+    }
     
-        binOpNodeFetched.append(child: rhs)
+    /// (binaryOperator primaryExpression)*
+    mutating func binaryExpression(_ node: ASTNode, exprPrecedence: Int = 0) throws -> ASTNode {
+        var lhs = node
         
-        return try binaryExpression(binOpNodeFetched)
+        // TODO: Understand better this algorithm
+        while true {
+            let tokenPrecedence = try getCurrentTokenPrecedence()
+            if tokenPrecedence < exprPrecedence {
+                // get out when there's an expression with less precedence or if there are no more tokens
+                return lhs
+            }
+            
+            // if you are here the current token has at least the precendence as the expression
+            let binOpNode = try binaryOperator()
+            
+            var rhs = try primaryExpression()
+            let nextPrecedence = try getCurrentTokenPrecedence()
+            
+            if tokenPrecedence < nextPrecedence {
+                rhs = try binaryExpression(rhs, exprPrecedence: tokenPrecedence + 1)
+            }
+            
+            binOpNode.append(child: lhs)
+            binOpNode.append(child: rhs)
+            
+            lhs = binOpNode
+        }
     }
     
     /// primaryExpression -> number | '(' expression ')'
@@ -85,7 +109,7 @@ struct Parser {
             
             
             if index >= tokens.count {
-                throw ParsingError.inclompleteExpression
+                throw ParsingError.incompleteExpression
             }
             _ = popCurrentToken() // Removing ')'
             
@@ -102,8 +126,13 @@ struct Parser {
         
         let primaryExprNode = try primaryExpression()
         let binaryOpNode = try binaryExpression(primaryExprNode)
-        
-        return binaryOpNode
+
+        switch binaryOpNode.value {
+        case Token.other:
+            return binaryOpNode
+        default:
+            throw ParsingError.invalidTokens(expecting: "Expecting operator")
+        }
     }
     
     func peekCurrentToken() throws -> Token {
@@ -112,7 +141,7 @@ struct Parser {
             return tokens[index]
         }
         
-        throw ParsingError.inclompleteExpression
+        throw ParsingError.incompleteExpression
     }
     
     mutating func popCurrentToken() -> Token {
@@ -132,13 +161,8 @@ struct Parser {
      
      **/
     public mutating func parse() throws -> ASTNode? {
-        var nodes: ASTNode? = nil //TODO: Remove optional
         
-        while index < tokens.count {
-            nodes = try expression()
-        }
-        
-        return nodes
+        return try expression()
     }
 }
 
