@@ -99,6 +99,44 @@ class ParserTests: XCTestCase {
         XCTAssert(String(describing: root) == String(describing: tree!))
     }
     
+    func test_OperatorPrecedence()  {
+        let tokens: [Token] = [.number(2), .other("+"), .number(3), .other("*"), .number(5)]
+        
+        let root = TreeNode(value: Token.other("+"))
+        let left = TreeNode(value: Token.number(2))
+        let right = TreeNode(value: Token.other("*"))
+        
+        root.append(child: left)
+        root.append(child: right)
+        
+        right.append(child: TreeNode(value: .number(3)))
+        right.append(child: TreeNode(value: .number(5)))
+        
+        var parser = Parser(tokens: tokens)
+        let tree = try! parser.parse()
+        
+        XCTAssert(String(describing: root) == String(describing: tree!))
+    }
+    
+    func test_ParenthesisOverOperatorPrecedence()  {
+        let tokens: [Token] = [.parensOpen, .number(2), .other("+"),  .number(3), .parensClose, .other("*"), .number(5)]
+        
+        let root = TreeNode(value: Token.other("*"))
+        let left = TreeNode(value: Token.other("+"))
+        let right = TreeNode(value: Token.number(5))
+        
+        root.append(child: left)
+        root.append(child: right)
+        
+        left.append(child: TreeNode(value: .number(2)))
+        left.append(child: TreeNode(value: .number(3)))
+        
+        var parser = Parser(tokens: tokens)
+        let tree = try! parser.parse()
+        
+        XCTAssert(String(describing: root) == String(describing: tree!))
+    }
+    
     func test_invalidInputNoNumbers() {
         let tokens: [Token] = [.parensOpen, .number(1), .other("+"), .number(2)]
         var expectedError: Error? = nil
@@ -111,7 +149,7 @@ class ParserTests: XCTestCase {
         }
         
         if let error = expectedError,
-            case ParsingError.inclompleteExpression = error {
+            case ParsingError.incompleteExpression = error {
             XCTAssertTrue(true)
         } else {
             XCTFail()
@@ -149,7 +187,7 @@ class ParserTests: XCTestCase {
         }
         
         if let error = expectedError,
-            case ParsingError.invalidTokens(expecting: "Expecting operator: +, -") = error {
+            case ParsingError.invalidTokens(expecting: "Expecting operator: +, -, *") = error {
             XCTAssertTrue(true)
         } else {
             XCTFail()
