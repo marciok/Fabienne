@@ -10,7 +10,7 @@ import XCTest
 
 class InterpreterTests: XCTestCase {
 
-    func testResultOfExpression() {
+    func test_ResultOfExpression() {
         let expectedResult = 3
         let tree = TreeNode.init(value: Token.other("+"))
         let left = TreeNode.init(value: Token.number(1))
@@ -24,7 +24,7 @@ class InterpreterTests: XCTestCase {
         XCTAssertTrue(expectedResult == result)
     }
     
-    func testResultOfExpressionMultplication() {
+    func test_ResultOfExpressionMultplication() {
         let expectedResult = 6
         let tree = TreeNode.init(value: Token.other("*"))
         let left = TreeNode.init(value: Token.number(3))
@@ -38,7 +38,7 @@ class InterpreterTests: XCTestCase {
         XCTAssertTrue(expectedResult == result)
     }
     
-    func testResultOfExpressionDivision() {
+    func test_ResultOfExpressionDivision() {
         let expectedResult = 4
         let tree = TreeNode.init(value: Token.other("/"))
         let left = TreeNode.init(value: Token.number(8))
@@ -52,7 +52,7 @@ class InterpreterTests: XCTestCase {
         XCTAssertTrue(expectedResult == result)
     }
     
-    func testResultOfLongExpression() {
+    func test_ResultOfLongExpression() {
         let expectedResult = 5
         let tree = TreeNode.init(value: Token.other("+"))
         let left = TreeNode.init(value: Token.other("-"))
