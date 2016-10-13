@@ -13,6 +13,7 @@ public enum Token {
     case parensClose
     case other(String)
     case number(Int)
+    case identifier(String)
     
     func rawValue() -> String {
         
@@ -25,6 +26,8 @@ public enum Token {
             return op
         case .number(let num):
             return String(num)
+        case .identifier(let id):
+            return String(id)
         }
     }
     
@@ -48,6 +51,7 @@ public struct Lexer {
         let tokensGenerator: [(String, TokenGenerator)] = [
             ("\\(", { _ in .parensOpen }),
             ("[ ]", { _ in nil }),
+            ("[a-zA-Z][a-zA-Z0-9]*", { .identifier($0) }),
             ("[0-9]+", { (r: String) in
                 guard let n = Int(r) else { return nil }
                 return .number(n)
