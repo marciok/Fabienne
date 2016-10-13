@@ -29,6 +29,17 @@ class LexerTests: XCTestCase {
         }
     }
     
+    func test_lexerForIdentifierAndNumbers() {
+        let expectedTokens: [Token] = [.number(1), .other("+"), .identifier("x")]
+        let tokens = Lexer.tokenize(string: "1+x")
+        
+        XCTAssertTrue(tokens.count == expectedTokens.count)
+        for index in 0..<expectedTokens.count {
+            XCTAssertTrue(tokens[index] == expectedTokens[index])
+        }
+    }
+    
+    /*
     func test_lexerForGarbage() {
         let expectedTokens = [Token.other("d"), Token.other("e"), Token.other("f")]
         let tokens = Lexer.tokenize(string: "def")
@@ -37,5 +48,5 @@ class LexerTests: XCTestCase {
             XCTAssertTrue(tokens[index] == expectedTokens[index])
         }
     }
-    
+    */
 }

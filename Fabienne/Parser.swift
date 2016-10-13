@@ -12,6 +12,20 @@ public enum ParsingError: Error {
     case incompleteExpression
 }
 
+/**
+ Parse Grammar:
+ 
+ expression -> [primaryExpression (binaryOperator primaryExpression)* ]
+ 
+ primaryExpression -> [number | identifier | '(' expression ')']
+ 
+ binaryOperator   -> [+-]
+ 
+ number -> [0..9]
+ 
+ identifer -> [aZ-0..9]
+ 
+ */
 struct Parser {
     
     var tree: ASTNode?
@@ -37,6 +51,18 @@ struct Parser {
             return token
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number")
+        }
+    }
+    
+    mutating func identifier() throws -> ASTNode {
+        
+        switch try peekCurrentToken() {
+        case .identifier:
+            let token = TreeNode(value: popCurrentToken())
+            
+            return token
+        default:
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier")
         }
     }
     
@@ -98,7 +124,7 @@ struct Parser {
         }
     }
     
-    /// primaryExpression -> number | '(' expression ')'
+    /// primaryExpression -> number | identifier | '(' expression ')'
     mutating func primaryExpression() throws -> ASTNode {
         let currentToken = try peekCurrentToken()
         
@@ -116,6 +142,8 @@ struct Parser {
             return expressionNode
         case .number:
             return try number()
+        case .identifier:
+            return try identifier()
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
         }
@@ -151,15 +179,6 @@ struct Parser {
         return token
     }
     
-    
-    /**
-     Grammar:
-     expression -> [primaryExpression (binaryOperator primaryExpression)* ];
-     primaryExpression -> [number | '(' expression ')']
-     binaryOperator   -> [+-]
-     number -> [0..9]
-     
-     **/
     public mutating func parse() throws -> ASTNode {
         
         return try expression()

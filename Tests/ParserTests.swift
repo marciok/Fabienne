@@ -23,6 +23,19 @@ class ParserTests: XCTestCase {
         XCTAssert(String(describing: root) == String(describing: tree))
     }
     
+    func test_binaryExpressionWithIdentifier(){
+        let tokens: [Token] = [.number(1), .other("+"), .identifier("x")]
+        let root = TreeNode(value: Token.other("+"))
+        let left = TreeNode(value: Token.number(1))
+        root.append(child: left)
+        let right = TreeNode(value: Token.identifier("x"))
+        root.append(child: right)
+        
+        var parser = Parser(tokens: tokens)
+        let tree = try! parser.parse()
+        XCTAssert(String(describing: root) == String(describing: tree))
+    }
+    
     func test_expressionWithoutParenthesis(){
         let tokens: [Token] = [.number(3), .other("-"), .number(4), .other("+"), .number(2)]
         
