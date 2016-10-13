@@ -20,7 +20,7 @@ class ParserTests: XCTestCase {
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_expressionWithoutParenthesis(){
@@ -37,7 +37,7 @@ class ParserTests: XCTestCase {
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_validInputWithParemIndie() {
@@ -58,7 +58,7 @@ class ParserTests: XCTestCase {
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_validInputWithParem() {
@@ -81,7 +81,7 @@ class ParserTests: XCTestCase {
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_multiplication()  {
@@ -96,7 +96,7 @@ class ParserTests: XCTestCase {
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_OperatorPrecedence()  {
@@ -115,7 +115,7 @@ class ParserTests: XCTestCase {
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_ParenthesisOverOperatorPrecedence()  {
@@ -134,7 +134,7 @@ class ParserTests: XCTestCase {
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree!))
+        XCTAssert(String(describing: root) == String(describing: tree))
     }
     
     func test_invalidInputNoNumbers() {

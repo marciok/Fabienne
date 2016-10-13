@@ -160,7 +160,7 @@ struct Parser {
      number -> [0..9]
      
      **/
-    public mutating func parse() throws -> ASTNode? {
+    public mutating func parse() throws -> ASTNode {
         
         return try expression()
     }

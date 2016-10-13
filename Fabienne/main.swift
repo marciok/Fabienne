@@ -11,7 +11,7 @@ import Foundation
 var tokens = Lexer.tokenize(string: readLine()!)
 var parser = Parser(tokens: tokens)
 let ast = try parser.parse()
-print(try! Interpreter.eval(ast!))
+print(try! Interpreter.eval(ast))
 
 
 
