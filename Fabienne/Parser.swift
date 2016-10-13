@@ -21,7 +21,7 @@ struct Parser {
         "+": 20,
         "-": 20,
         "*": 40,
-        // "/": 40 //TODO
+        "/": 40
     ]
     
     init(tokens: [Token]) {
@@ -44,11 +44,12 @@ struct Parser {
         switch try peekCurrentToken() {
         case .other("-"),
              .other("*"),
+             .other("/"),
              .other("+"):
             
             return TreeNode(value: popCurrentToken())
         default:
-            throw ParsingError.invalidTokens(expecting: "Expecting operator: +, -, *")
+            throw ParsingError.invalidTokens(expecting: "Expecting operator")
         }
     }
     
@@ -130,7 +131,7 @@ struct Parser {
         case Token.other:
             return binaryOpNode
         default:
-            throw ParsingError.invalidTokens(expecting: "Expecting operator: +, -, *")
+            throw ParsingError.invalidTokens(expecting: "Expecting operator")
         }
     }
     

@@ -187,7 +187,7 @@ class ParserTests: XCTestCase {
         }
         
         if let error = expectedError,
-            case ParsingError.invalidTokens(expecting: "Expecting operator: +, -, *") = error {
+            case ParsingError.invalidTokens(expecting: "Expecting operator") = error {
             XCTAssertTrue(true)
         } else {
             XCTFail()
