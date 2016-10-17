@@ -34,3 +34,7 @@ extension TreeNode: CustomStringConvertible {
         return s
     }
 }
+
+public class ProtoNode: ASTNode {
+    var arguments: [Token] = []
+}
