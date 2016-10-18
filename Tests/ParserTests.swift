@@ -12,185 +12,119 @@ class ParserTests: XCTestCase {
     
     func test_binaryExpressionWithoutParenthesis(){
         let tokens: [Token] = [.number(1), .other("+"), .number(2)]
-        let root = TreeNode(value: Token.other("+"))
-        let left = TreeNode(value: Token.number(1))
-        root.append(child: left)
-        let right = TreeNode(value: Token.number(2))
-        root.append(child: right)
+        let binExpr = Expression.binaryExpr("+", .literalExpr(1), .literalExpr(2))
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_binaryExpressionWithIdentifier(){
         let tokens: [Token] = [.number(1), .other("+"), .identifier("x")]
-        let root = TreeNode(value: Token.other("+"))
-        let left = TreeNode(value: Token.number(1))
-        root.append(child: left)
-        let right = TreeNode(value: Token.identifier("x"))
-        root.append(child: right)
+        let binExpr = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_expressionWithoutParenthesis(){
         let tokens: [Token] = [.number(3), .other("-"), .number(4), .other("+"), .number(2)]
-        
-        let root = TreeNode(value: Token.other("+"))
-        
-        let left = TreeNode.init(value: Token.other("-"))
-        root.append(child: left)
-        left.append(child: TreeNode(value: .number(3)))
-        left.append(child: TreeNode(value: .number(4)))
-        let right = TreeNode(value: Token.number(2))
-        root.append(child: right)
+        let lhs = Expression.binaryExpr("-", .literalExpr(3), .literalExpr(4))
+        let binExpr = Expression.binaryExpr("+", lhs, .literalExpr(2))
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_validInputWithParemIndie() {
         let tokens: [Token] = [.number(5), .other("-"), .parensOpen, .number(2), .other("+"), .number(3), .parensClose]
-        
-        let root = TreeNode(value: Token.other("-"))
-        let right = TreeNode(value: Token.other("+"))
-        let left = TreeNode(value: Token.number(5))
-        root.append(child: left)
-        root.append(child: right)
-        
-        
-        let right1stChild = TreeNode.init(value: Token.number(2))
-        let right2ndChild = TreeNode.init(value: Token.number(3))
-        
-        right.append(child: right1stChild)
-        right.append(child: right2ndChild)
+        let rhs = Expression.binaryExpr("+", .literalExpr(2), .literalExpr(3))
+        let binExpr = Expression.binaryExpr("-", .literalExpr(5), rhs)
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_validInputWithParem() {
         let tokens: [Token] = [.number(1), .other("+"), .parensOpen, .number(2), .other("+"), .parensOpen, .number(3), .other("-"), .number(2), .parensClose, .parensClose]
         
-        let root = TreeNode(value: Token.other("+"))
-        let left = TreeNode(value: Token.number(1))
-        let right = TreeNode(value: Token.other("+"))
-        
-        root.append(child: left)
-        root.append(child: right)
-        
-        right.append(child: TreeNode(value: .number(2)))
-        let rightChild = TreeNode(value: Token.other("-"))
-        right.append(child: rightChild)
-
-        rightChild.append(child: TreeNode(value: .number(3)))
-        rightChild.append(child: TreeNode(value: .number(2)))
+        let lhs1 = Expression.binaryExpr("-", .literalExpr(3), .literalExpr(2))
+        let rhs = Expression.binaryExpr("+", .literalExpr(2), lhs1)
+        let binExpr = Expression.binaryExpr("+", .literalExpr(1), rhs)
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_multiplication()  {
         let tokens: [Token] = [.number(3), .other("*"), .number(2)]
-        
-        let root = TreeNode(value: Token.other("*"))
-        let left = TreeNode(value: Token.number(3))
-        let right = TreeNode(value: Token.number(2))
-        root.append(child: left)
-        root.append(child: right)
+        let binExpr = Expression.binaryExpr("*", .literalExpr(3), .literalExpr(2))
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_OperatorPrecedence()  {
         let tokens: [Token] = [.number(2), .other("+"), .number(3), .other("*"), .number(5)]
-        
-        let root = TreeNode(value: Token.other("+"))
-        let left = TreeNode(value: Token.number(2))
-        let right = TreeNode(value: Token.other("*"))
-        
-        root.append(child: left)
-        root.append(child: right)
-        
-        right.append(child: TreeNode(value: .number(3)))
-        right.append(child: TreeNode(value: .number(5)))
+        let rhs = Expression.binaryExpr("*", .literalExpr(3), .literalExpr(5))
+        let binExpr = Expression.binaryExpr("+", .literalExpr(2), rhs)
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_ParenthesisOverOperatorPrecedence()  {
         let tokens: [Token] = [.parensOpen, .number(2), .other("+"),  .number(3), .parensClose, .other("*"), .number(5)]
-        
-        let root = TreeNode(value: Token.other("*"))
-        let left = TreeNode(value: Token.other("+"))
-        let right = TreeNode(value: Token.number(5))
-        
-        root.append(child: left)
-        root.append(child: right)
-        
-        left.append(child: TreeNode(value: .number(2)))
-        left.append(child: TreeNode(value: .number(3)))
+        let rhs = Expression.binaryExpr("+", .literalExpr(2), .literalExpr(3))
+        let binExpr = Expression.binaryExpr("*", rhs, .literalExpr(5))
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: root) == String(describing: tree))
+        XCTAssert(String(describing: binExpr) == String(describing: tree))
     }
     
     func test_definitionDeclaration() {
      let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd]
         
-        let prototype = TreeNode(value: Token.identifier("foo"))
-        let body = TreeNode(value: Token.other("+"))
-        body.append(child: TreeNode(value: .number(1)))
-        body.append(child: TreeNode(value: .identifier("x")))
-        prototype.append(child: body)
+        let proto = Prototype(name: "foo", args: ["x" : nil])
+        let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
+        let definition = Function(prototype: proto, body: body)
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: prototype) == String(describing: tree))
+        XCTAssert(String(describing: definition) == String(describing: tree))
     }
     
     func test_callExpression() {
         let tokens: [Token] = [.identifier("foo"), .parensOpen,  .number(4),  .parensClose]
-        
-        let call = TreeNode(value: Token.identifier("foo"))
-        call.append(child: TreeNode(value: .number(4)))
+        let callExpr = Expression.callExpr("foo", .literalExpr(4))
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: call) == String(describing: tree))
+        XCTAssert(String(describing: callExpr) == String(describing: tree))
     }
     
     func test_callExpressionWithOtherExpresssion() {
         let tokens: [Token] = [.identifier("foo"), .parensOpen,  .number(2), .other("+"), .number(2),  .parensClose]
-        
-        let call = TreeNode(value: Token.identifier("foo"))
-        let argExprNode = TreeNode(value: Token.other("+"))
-        call.append(child: argExprNode)
-        
-        argExprNode.append(child: TreeNode(value: .number(2)))
-        argExprNode.append(child: TreeNode(value: Token.number(2)))
+        let expr = Expression.binaryExpr("+", .literalExpr(2), .literalExpr(2))
+        let callExpr = Expression.callExpr("foo", expr)
         
         var parser = Parser(tokens: tokens)
         let tree = try! parser.parse()
         
-        XCTAssert(String(describing: call) == String(describing: tree))
+        XCTAssert(String(describing: callExpr) == String(describing: tree))
     }
     
     func test_invalidInputNoNumbers() {

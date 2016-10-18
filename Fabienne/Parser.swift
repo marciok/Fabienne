@@ -7,19 +7,6 @@
 //
 import Foundation
 
-//TODO: Naïve implementation. REFACTOR!!!
-final class FunctionNode {
-    var arguments: [String : Int?] = [:]
-    var body: ASTNode
-    
-    init(arguments: [String : Int?], body: ASTNode) {
-        self.arguments = arguments
-        self.body = body
-    }
-}
-
-var implTable: [String : FunctionNode] = [:]
-
 public enum ParsingError: Error {
     case invalidTokens(expecting: String)
     case incompleteExpression
@@ -49,7 +36,7 @@ public enum ParsingError: Error {
  */
 struct Parser {
     
-    var tree: ASTNode?
+    var tree: ASTNode? //TODO: Remove
     var tokens: [Token]
     var index = 0
     let operatorPrecedence: [String: Int] = [
@@ -63,41 +50,31 @@ struct Parser {
         self.tokens = tokens
     }
     
-    mutating func number() throws -> ASTNode {
+    mutating func number() throws -> Expression {
         
-        switch try peekCurrentToken() {
-        case .number:
-            let token = TreeNode(value: popCurrentToken())
-            
-            return token
-        default:
+        guard case let .number(num) = popCurrentToken() else {
             throw ParsingError.invalidTokens(expecting: "Expecting number")
         }
+        
+        return .literalExpr(num)
     }
     
-    mutating func identifier() throws -> ASTNode {
+    mutating func identifier() throws -> Expression {
         
-        switch try peekCurrentToken() {
-        case .identifier:
-            let token = TreeNode(value: popCurrentToken())
-            
-            return token
-        default:
+        guard case let .identifier(id) = popCurrentToken() else {
             throw ParsingError.invalidTokens(expecting: "Expecting identifier")
         }
+        
+       return .variableExpr(id)
     }
     
-    mutating func binaryOperator() throws -> ASTNode {
-        switch try peekCurrentToken() {
-        case .other("-"),
-             .other("*"),
-             .other("/"),
-             .other("+"):
-            
-            return TreeNode(value: popCurrentToken())
-        default:
-            throw ParsingError.invalidTokens(expecting: "Expecting operator")
+    mutating func binaryOperator() throws -> String {
+        
+        guard case let .other(op) = popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting Operator")
         }
+        
+        return op
     }
     
     func getCurrentTokenPrecedence() throws -> Int {
@@ -117,7 +94,7 @@ struct Parser {
     }
     
     /// (binaryOperator primaryExpression)*
-    mutating func binaryExpression(_ node: ASTNode, exprPrecedence: Int = 0) throws -> ASTNode {
+    mutating func binaryExpression(_ node: Expression, exprPrecedence: Int = 0) throws -> Expression {
         var lhs = node
         
         // TODO: Understand better this algorithm
@@ -138,15 +115,12 @@ struct Parser {
                 rhs = try binaryExpression(rhs, exprPrecedence: tokenPrecedence + 1)
             }
             
-            binOpNode.append(child: lhs)
-            binOpNode.append(child: rhs)
-            
-            lhs = binOpNode
+            lhs = Expression.binaryExpr(binOpNode, lhs, rhs)
         }
     }
     
     /// primaryExpression -> number | identifier | callExpression | '(' expression ')'
-    mutating func primaryExpression() throws -> ASTNode {
+    mutating func primaryExpression() throws -> Expression {
         let currentToken = try peekCurrentToken()
         
         switch currentToken {
@@ -164,17 +138,21 @@ struct Parser {
         case .number:
             return try number()
         case .identifier:
-            let id = try identifier()
+            let iden = try identifier()
             
             if index >= tokens.count {
-                return id
+                return iden
             }
             
             if try peekCurrentToken() == .parensOpen  {
+                
+                guard case let .variableExpr(id) = iden else {
+                    throw ParsingError.invalidTokens(expecting: "Expecting identifier")
+                }
                 return try callExpression(id)
             }
             
-            return id
+            return iden
             
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
@@ -182,7 +160,7 @@ struct Parser {
     }
     
     /// expression -> [primaryExpression (binaryOperator primaryExpression)* ];
-    mutating func expression() throws -> ASTNode {
+    mutating func expression() throws -> Expression {
         
         let primaryExprNode = try primaryExpression()
         let binaryOpNode = try binaryExpression(primaryExprNode)
@@ -197,7 +175,7 @@ struct Parser {
     }
     
     /// callExpression    : identifier '(' expression ')'
-    mutating func callExpression(_ id: ASTNode) throws -> ASTNode {
+    mutating func callExpression(_ id: String) throws -> Expression {
         
         if try peekCurrentToken() != .parensOpen {
             throw ParsingError.invalidTokens(expecting: "Expecting: (")
@@ -213,15 +191,13 @@ struct Parser {
         
         _ = popCurrentToken() // Removing ')'
         
-        id.append(child: expression)
-        
-        return id
+        return .callExpr(id, expression)
     }
-    mutating func prototype() throws -> ProtoNode {
+    mutating func prototype() throws -> Prototype {
         
         switch try peekCurrentToken() {
         case .identifier:
-            let protoNode = ProtoNode(value: popCurrentToken())
+            var protoNode = Prototype(name: popCurrentToken().rawValue(), args: [:])
             
             if try peekCurrentToken() != .parensOpen {
                 throw ParsingError.invalidTokens(expecting: "Expecting: (")
@@ -231,8 +207,9 @@ struct Parser {
             
             switch try peekCurrentToken() {
             case .identifier:
-                let argument = popCurrentToken() //TODO: Increase number of arguments
-                protoNode.arguments.append(argument)
+                let argument = popCurrentToken().rawValue() //TODO: Increase number of arguments
+                let args: [String : Int?] = [argument : nil]
+                protoNode.args = args
                 
                 if try peekCurrentToken() != .parensClose {
                     throw ParsingError.invalidTokens(expecting: "Expecting: )")
@@ -254,7 +231,7 @@ struct Parser {
         
     }
     
-    mutating func definition() throws -> ASTNode {
+    mutating func definition() throws -> Function {
         _ = popCurrentToken() // Removing 'def'
         let proto = try prototype()
         let body = try expression()
@@ -264,13 +241,9 @@ struct Parser {
         }
         
         _ = popCurrentToken() // Removing 'end'
+        let function = Function(prototype: proto, body: body)
         
-        proto.append(child: body)
-        
-        let function = FunctionNode(arguments: [proto.arguments.first!.rawValue() : nil] , body: body)
-        implTable[proto.value.rawValue()] = function
-        
-        return proto
+        return function
     }
     
     func peekCurrentToken() throws -> Token {
@@ -293,9 +266,11 @@ struct Parser {
         
         switch try peekCurrentToken() {
         case .definitionBegin:
-            return try definition()
+            let def = try definition()
+            return ASTNode.functionNode(def)
         default:
-            return try expression()
+            let expr = try expression()
+            return ASTNode.freeExpression(expr)
         }
         
     }

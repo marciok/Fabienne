@@ -10,76 +10,78 @@ import Foundation
 
 public enum InterpreterError: Error {
     case undefinedToken
+    case undefinedFunction
+    case undefinedVariable
 }
+
+var functionsTable: [String : Function] = [:]
 
 public struct Interpreter {
     
-    public static func eval(_ tree: ASTNode) throws -> Int? {
-        switch tree.value {
-        case .identifier:
+    static func evalFunction(_ function: Function) {
+        //1. Create table for each function
+        //2. key will be name
+        functionsTable[function.prototype.name] = function
+    }
+    
+    static func evalExpression(_ expression: Expression, ctx: String? = nil) throws -> Int {
+        
+        switch expression {
+        case .binaryExpr(let op, let lhs, let rhs):
+            let lhsResult = try evalExpression(lhs, ctx: ctx)
+            let rhsResult = try evalExpression(rhs, ctx: ctx)
             
+            //TOOD: Let's make that dynamic in the future
             
-            if let function = implTable[tree.value.rawValue()] {
-                // There's a function, so it's calling
-                // Bind arguments
-                let argument = try eval(tree.children.first!)
-                var mutArgs = function.arguments
-                var firstArg = mutArgs.first!
-                firstArg.value = argument
-                mutArgs[firstArg.key] = firstArg.value
-                
-                function.arguments = mutArgs
-                
-                return try eval(function.body)
+            switch op {
+            case "+":
+                return lhsResult + rhsResult
+            case "-":
+                return lhsResult - rhsResult
+            case "*":
+                return lhsResult * rhsResult
+            case "/":
+                return lhsResult / rhsResult
+            default:
+                throw InterpreterError.undefinedFunction
             }
             
-            //This is very ineffecient but I'm doing just to see if it works
-            let bindings = implTable.map { $0.value.arguments.filter { $0.key == tree.value.rawValue() }.first }
+        case .literalExpr(let num):
+            return num
+        case .callExpr(let funName, let args):
+            //1. Find fun 
+            guard var function = functionsTable[funName] else { throw InterpreterError.undefinedFunction }
+            //2. Evaluate args
+            let argsResult = try evalExpression(args, ctx: ctx)
             
-            if let binding = bindings.first {
-                return binding?.value
+            //3. Bind args
+            if let firstArg = function.prototype.args.first {
+                function.prototype.args[firstArg.key] = argsResult
             }
-
             
-        default:
-            return try evalExpression(tree)
+            functionsTable[funName] = function
+            
+            //4. Evaluate body
+            return try evalExpression(function.body, ctx: function.prototype.name)
+        case .variableExpr(let variable):
+            guard let funName = ctx,
+                let function = functionsTable[funName],
+            let binding = function.prototype.args[variable],
+            let result = binding else { throw InterpreterError.undefinedVariable }
+            
+            return result
+        }
+    }
+    
+    public static func eval(_ nodes: ASTNode) throws -> Int? {
+        
+        switch nodes {
+        case .freeExpression(let expr):
+            return try evalExpression(expr)
+        case.functionNode(let fun):
+            evalFunction(fun)
         }
         
         return nil
-    }
-    
-    static func evalExpression(_ tree: ASTNode) throws -> Int {
-        
-        let val = tree.value
-        
-        if  tree.children.isEmpty {
-            return Int(val.rawValue())!
-        }
-        
-        switch val {
-        case .other("+"):
-            let firstNumber = try eval(tree.children.first!)
-            let secondNumber = try eval(tree.children.last!)
-            
-            return firstNumber! + secondNumber!
-        case .other("-"):
-            let firstNumber = try eval(tree.children.first!)
-            let secondNumber = try eval(tree.children.last!)
-            
-            return firstNumber! - secondNumber!
-            
-        case .other("*"):
-            let firstNumber = try eval(tree.children.first!)
-            let secondNumber = try eval(tree.children.last!)
-            
-            return firstNumber! * secondNumber!
-        case .other("/"):
-            let firstNumber = try eval(tree.children.first!)
-            let secondNumber = try eval(tree.children.last!)
-            
-            return firstNumber! / secondNumber!
-        default:
-            throw InterpreterError.undefinedToken
-        }
     }
 }

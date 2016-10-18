@@ -17,22 +17,17 @@ while input != ":q" {
     var tokens = Lexer.tokenize(string: content)    
     var parser = Parser(tokens: tokens)
     let ast = try parser.parse()
-    
-    //TODO: this is a Quickfix
-    if tokens.first! == .definitionBegin {
-        print("func defined")
-    } else {
-        do {
-            let result = try Interpreter.eval(ast)
-            if let r = result {
-                print(r)
-            } else {
-                print("nil")
-            }
-        } catch let error {
-            print(error)
+    print(ast)
+
+    do {
+        let result = try Interpreter.eval(ast)
+        if let r = result {
+            print(r)
+        } else {
+            print("nil")
         }
-        
+    } catch let error {
+        print(error)
     }
     
     input = readLine()
