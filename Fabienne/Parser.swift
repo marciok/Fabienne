@@ -183,6 +183,12 @@ struct Parser {
         
         _ = popCurrentToken() // Removing '('
         
+        if try peekCurrentToken() == .parensClose {
+            _ = popCurrentToken() // Removing ')'
+            
+            return .callExpr(id, Expression.literalExpr(0))
+        }
+        
        let expression = try self.expression()
         
         if try peekCurrentToken() != .parensClose {
