@@ -27,7 +27,6 @@ public struct Function {
 
 public enum ASTNode {
     case functionNode(Function)
-    case freeExpression(Expression)
 }
 
 extension ASTNode: CustomStringConvertible {
@@ -36,9 +35,6 @@ extension ASTNode: CustomStringConvertible {
         switch self {
         case .functionNode(let fun):
             return fun.description
-        case .freeExpression(let expr):
-            return expr.description
-            
         }
     }
 }

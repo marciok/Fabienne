@@ -18,12 +18,6 @@ var functionsTable: [String : Function] = [:]
 
 public struct Interpreter {
     
-    static func evalFunction(_ function: Function) {
-        //1. Create table for each function
-        //2. key will be name
-        functionsTable[function.prototype.name] = function
-    }
-    
     static func evalExpression(_ expression: Expression, ctx: String? = nil) throws -> Int {
         
         switch expression {
@@ -76,10 +70,13 @@ public struct Interpreter {
     public static func eval(_ nodes: ASTNode) throws -> Int? {
         
         switch nodes {
-        case .freeExpression(let expr):
-            return try evalExpression(expr)
         case.functionNode(let fun):
-            evalFunction(fun)
+            
+            if fun.prototype.name.isEmpty {
+                return try evalExpression(fun.body)
+            }
+            
+            functionsTable[fun.prototype.name] = fun
         }
         
         return nil

@@ -19,15 +19,18 @@ while input != ":q" {
     let ast = try parser.parse()
     print(ast)
 
-    do {
-        let result = try Interpreter.eval(ast)
-        if let r = result {
-            print(r)
-        } else {
-            print("nil")
+    for a in ast {
+        do {
+            let result = try Interpreter.eval(a)
+            if let r = result {
+                print(r)
+            } else {
+                print("nil")
+            }
+        } catch let error {
+            print(error)
         }
-    } catch let error {
-        print(error)
+        
     }
     
     input = readLine()

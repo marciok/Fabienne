@@ -262,17 +262,25 @@ struct Parser {
         return token
     }
     
-    public mutating func parse() throws -> ASTNode {
-        
-        switch try peekCurrentToken() {
-        case .definitionBegin:
-            let def = try definition()
-            return ASTNode.functionNode(def)
-        default:
-            let expr = try expression()
-            return ASTNode.freeExpression(expr)
+    public mutating func parse() throws -> [ASTNode] {
+        var nodes = [ASTNode]()
+        while index < tokens.count {
+            switch try peekCurrentToken() {
+            case .definitionBegin:
+                let def = try definition()
+                
+                nodes.append(ASTNode.functionNode(def))
+            default:
+                let expr = try expression()
+                //Create a lambda
+                let proto = Prototype(name: "", args: [:])
+                let lambda = Function(prototype: proto, body: expr)
+                
+                nodes.append(ASTNode.functionNode(lambda))
+            }
         }
         
+        return nodes
     }
 }
 
