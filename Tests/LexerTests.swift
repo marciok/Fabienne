@@ -39,14 +39,15 @@ class LexerTests: XCTestCase {
         }
     }
     
-    /*
-    func test_lexerForGarbage() {
-        let expectedTokens = [Token.other("d"), Token.other("e"), Token.other("f")]
-        let tokens = Lexer.tokenize(string: "def")
+    func test_lexerForDefinitions() {
+        let expectedTokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd]
+        let tokens = Lexer.tokenize(string: "def foo(x) 1+x end")
+        
         XCTAssertTrue(tokens.count == expectedTokens.count)
         for index in 0..<expectedTokens.count {
             XCTAssertTrue(tokens[index] == expectedTokens[index])
         }
     }
-    */
+    
+    
 }

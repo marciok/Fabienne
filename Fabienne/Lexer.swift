@@ -14,6 +14,8 @@ public enum Token {
     case other(String)
     case number(Int)
     case identifier(String)
+    case definitionBegin
+    case definitionEnd
     
     func rawValue() -> String {
         
@@ -28,6 +30,10 @@ public enum Token {
             return String(num)
         case .identifier(let id):
             return String(id)
+        case .definitionBegin:
+            return "def"
+        case .definitionEnd:
+            return "end"
         }
     }
     
@@ -51,7 +57,16 @@ public struct Lexer {
         let tokensGenerator: [(String, TokenGenerator)] = [
             ("\\(", { _ in .parensOpen }),
             ("[ ]", { _ in nil }),
-            ("[a-zA-Z][a-zA-Z0-9]*", { .identifier($0) }),
+            ("[a-zA-Z][a-zA-Z0-9]*", {
+                
+                if $0 == Token.definitionBegin.rawValue() {
+                    return .definitionBegin
+                } else if $0 == Token.definitionEnd.rawValue() {
+                    return .definitionEnd
+                }
+                
+                return .identifier($0)
+            }),
             ("[0-9]+", { (r: String) in
                 guard let n = Int(r) else { return nil }
                 return .number(n)

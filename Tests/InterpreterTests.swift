@@ -12,62 +12,64 @@ class InterpreterTests: XCTestCase {
 
     func test_ResultOfExpression() {
         let expectedResult = 3
-        let tree = TreeNode.init(value: Token.other("+"))
-        let left = TreeNode.init(value: Token.number(1))
-        let right = TreeNode.init(value: Token.number(2))
+        let binExpr = Expression.binaryExpr("+", .literalExpr(1), .literalExpr(2))
+        let proto = Prototype(name: "", args: [:])
+        let lambda = Function(prototype: proto, body: binExpr)
+        let nodes = ASTNode.functionNode(lambda)
         
-        tree.append(child: left)
-        tree.append(child: right)
-        
-        let result = try! Interpreter.eval(tree)
+        let result = try! Interpreter.eval(nodes)
         
         XCTAssertTrue(expectedResult == result)
     }
     
     func test_ResultOfExpressionMultplication() {
         let expectedResult = 6
-        let tree = TreeNode.init(value: Token.other("*"))
-        let left = TreeNode.init(value: Token.number(3))
-        let right = TreeNode.init(value: Token.number(2))
+        let binExpr = Expression.binaryExpr("*", .literalExpr(2), .literalExpr(3))
+        let proto = Prototype(name: "", args: [:])
+        let lambda = Function(prototype: proto, body: binExpr)
+        let nodes = ASTNode.functionNode(lambda)
         
-        tree.append(child: left)
-        tree.append(child: right)
-        
-        let result = try! Interpreter.eval(tree)
+        let result = try! Interpreter.eval(nodes)
         
         XCTAssertTrue(expectedResult == result)
     }
     
     func test_ResultOfExpressionDivision() {
         let expectedResult = 4
-        let tree = TreeNode.init(value: Token.other("/"))
-        let left = TreeNode.init(value: Token.number(8))
-        let right = TreeNode.init(value: Token.number(2))
+        let binExpr = Expression.binaryExpr("/", .literalExpr(8), .literalExpr(2))
+        let proto = Prototype(name: "", args: [:])
+        let lambda = Function(prototype: proto, body: binExpr)
+        let nodes = ASTNode.functionNode(lambda)
         
-        tree.append(child: left)
-        tree.append(child: right)
-        
-        let result = try! Interpreter.eval(tree)
+        let result = try! Interpreter.eval(nodes)
         
         XCTAssertTrue(expectedResult == result)
     }
     
-    func test_ResultOfLongExpression() {
-        let expectedResult = 5
-        let tree = TreeNode.init(value: Token.other("+"))
-        let left = TreeNode.init(value: Token.other("-"))
-        tree.append(child: left)
-        let right = TreeNode.init(value: Token.number(4))
-        tree.append(child: right)
-        let left1stChild = TreeNode.init(value: Token.number(2))
-        let left2ndChild = TreeNode.init(value: Token.number(1))
+    func test_ResultDeclaringFunction() {
+        let body = Expression.binaryExpr("/", .variableExpr("x"), .literalExpr(2))
+        let proto = Prototype(name: "foo", args: ["x" : nil])
+        let function = Function(prototype: proto, body: body)
+        let nodes = ASTNode.functionNode(function)
         
-        left.append(child: left1stChild)
-        left.append(child: left2ndChild)
+        let result = try! Interpreter.eval(nodes)
         
-        let result = try! Interpreter.eval(tree)
-        
-        XCTAssertTrue(expectedResult == result)
+        XCTAssertNil(result)
     }
     
+    func test_ResultDeclaringFunctionAndCalling() {
+        let body = Expression.binaryExpr("/", .variableExpr("x"), .literalExpr(2))
+        let proto = Prototype(name: "foo", args: ["x" : nil])
+        let function = Function(prototype: proto, body: body)
+        let nodes = ASTNode.functionNode(function)
+        
+        let callExpr = Expression.callExpr("foo", .literalExpr(8))
+        let lambda = ASTNode.functionNode(Function(prototype: Prototype(name: "", args: [:]), body: callExpr))
+        
+        _ = try! Interpreter.eval(nodes)
+        let result = try! Interpreter.eval(lambda)
+        
+        XCTAssertTrue(result == 4)
+    }
+
 }

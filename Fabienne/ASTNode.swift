@@ -8,29 +8,66 @@
 
 import Foundation
 
-public typealias ASTNode = TreeNode<Token>
-
-public class TreeNode<T> {
-    public var value: T
-    public var parent: TreeNode?
-    public var children = [TreeNode<T>]()
-    
-    public init(value: T) {
-        self.value = value
-    }
-    
-    public func append(child node: TreeNode<T>) {
-        self.children.append(node)
-        node.parent = self
-    }
+public struct Prototype {
+    let name: String
+    var args: [String : Int?] = [:]
 }
 
-extension TreeNode: CustomStringConvertible {
+public indirect enum Expression {
+    case literalExpr(Int)
+    case variableExpr(String)
+    case binaryExpr(String, Expression, Expression)
+    case callExpr(String, Expression)//TODO: Just one expression because it only takes one argument
+}
+
+public struct Function {
+    var prototype: Prototype
+    let body: Expression
+}
+
+public enum ASTNode {
+    case functionNode(Function)
+}
+
+extension ASTNode: CustomStringConvertible {
+    
     public var description: String {
-        var s = "\(value)"
-        if !children.isEmpty {
-            s += " {" + children.map { $0.description }.joined(separator: ", ") + "}"
+        switch self {
+        case .functionNode(let fun):
+            return fun.description
         }
-        return s
     }
 }
+
+extension Prototype: CustomStringConvertible {
+    
+    public var description: String {
+        return "\(name)  arguments:\(args)"
+    }
+}
+
+extension Function: CustomStringConvertible {
+    
+    public var description: String {
+        return "\(prototype.description): \(body.description)"
+    }
+}
+
+
+extension Expression: CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .binaryExpr(let op, let lhs, let rhs):
+            return  op + " { " + lhs.description + ", " + rhs.description + " }"
+        case .literalExpr(let num):
+            return String(num)
+        case .variableExpr(let variable):
+            return variable
+        case.callExpr(let iden, let expr):
+            return iden + expr.description
+        }
+        
+    }
+}
+
