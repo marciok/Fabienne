@@ -17,6 +17,7 @@
 		575C53041DABE0C10069EF9B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52FF1DABDFD00069EF9B /* Lexer.swift */; };
 		575C53051DABE0D20069EF9B /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
 		576B777E1D9D997400AFC611 /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576B777D1D9D997400AFC611 /* ParserTests.swift */; };
+		576D6BBF1DB843FC00383AF2 /* LLVMIRGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576D6BBE1DB843FC00383AF2 /* LLVMIRGenerator.swift */; };
 		576F57301DA7DEA900421112 /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F572F1DA7DEA900421112 /* LexerTests.swift */; };
 		579F585F1DB6706900679979 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F41DABD5990069EF9B /* Interpreter.swift */; };
 		579F58601DB6706900679979 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F41DABD5990069EF9B /* Interpreter.swift */; };
@@ -46,6 +47,7 @@
 		576B777B1D9D997400AFC611 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		576B777D1D9D997400AFC611 /* ParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserTests.swift; sourceTree = "<group>"; };
 		576B777F1D9D997400AFC611 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		576D6BBE1DB843FC00383AF2 /* LLVMIRGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LLVMIRGenerator.swift; sourceTree = "<group>"; };
 		576F572F1DA7DEA900421112 /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexerTests.swift; sourceTree = "<group>"; };
 		577C0FE01D9C59CE005B7B06 /* Fabienne */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Fabienne; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -106,6 +108,7 @@
 		577C0FD71D9C59CD005B7B06 = {
 			isa = PBXGroup;
 			children = (
+				576D6BBE1DB843FC00383AF2 /* LLVMIRGenerator.swift */,
 				576F57351DA81EC300421112 /* Utils */,
 				576F57311DA7E10D00421112 /* Lexer */,
 				576A5A221DA6CCCF00F56D91 /* Interpreter */,
@@ -243,6 +246,7 @@
 				579F585F1DB6706900679979 /* Interpreter.swift in Sources */,
 				575C53021DABDFDB0069EF9B /* StringExtensions.swift in Sources */,
 				575C52FB1DABD5E10069EF9B /* ASTNode.swift in Sources */,
+				576D6BBF1DB843FC00383AF2 /* LLVMIRGenerator.swift in Sources */,
 				57172A811DB57B9F00F71B86 /* Parser.swift in Sources */,
 				575C53001DABDFD00069EF9B /* Lexer.swift in Sources */,
 				575C52F81DABD5A80069EF9B /* main.swift in Sources */,
@@ -319,6 +323,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
+				LLVM_LIBS = "-lLLVMAnalysis -lLLVMCore -lLLVMSupport";
+				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -362,6 +369,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
+				LLVM_LIBS = "-lLLVMAnalysis -lLLVMCore -lLLVMSupport";
+				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -372,8 +382,41 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEFINES_MODULE = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					__STDC_LIMIT_MACROS,
+					__STDC_CONSTANT_MACROS,
+				);
+				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
+				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
+				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
+				OTHER_LDFLAGS = (
+					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMScalarOpts",
+					"-lLLVMInstCombine",
+					"-lLLVMInstrumentation",
+					"-lLLVMTransformUtils",
+					"-lLLVMMC",
+					"-lLLVMBitWriter",
+					"-lLLVMBitReader",
+					"-lLLVMAnalysis",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+					"-ltermcap",
+					"-lz",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
 			name = Debug;
 		};
@@ -381,8 +424,35 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEFINES_MODULE = YES;
+				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
+				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
+				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
+				OTHER_LDFLAGS = (
+					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMScalarOpts",
+					"-lLLVMInstCombine",
+					"-lLLVMInstrumentation",
+					"-lLLVMTransformUtils",
+					"-lLLVMMC",
+					"-lLLVMBitWriter",
+					"-lLLVMBitReader",
+					"-lLLVMAnalysis",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+					"-ltermcap",
+					"-lz",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
 			name = Release;
 		};
