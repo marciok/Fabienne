@@ -36,7 +36,6 @@ public enum ParsingError: Error {
  */
 struct Parser {
     
-    var tree: ASTNode? //TODO: Remove
     var tokens: [Token]
     var index = 0
     let operatorPrecedence: [String: Int] = [
