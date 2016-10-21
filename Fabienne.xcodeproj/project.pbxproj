@@ -268,12 +268,43 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					__STDC_LIMIT_MACROS,
+					__STDC_CONSTANT_MACROS,
+				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-ltermcap",
+					"-lLLVMDemangle",
+					"-lLLVMSupport",
+					"-lLLVMCore",
+					"-lLLVMProfileData",
+					"-lLLVMAnalysis",
+					"-lLLVMBitReader",
+					"-lLLVMBitWriter",
+					"-lLLVMMC",
+					"-lLLVMTransformUtils",
+					"-lLLVMInstrumentation",
+					"-lLLVMInstCombine",
+					"-lLLVMScalarOpts",
+					"-lLLVMTarget",
+					"-lLLVMCodeGen",
+					"-lLLVMMCParser",
+					"-lLLVMObject",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMExecutionEngine",
+					"-lLLVMInterpreter",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = Marciok.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 3.0;
+				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
 			name = Debug;
 		};
@@ -283,10 +314,35 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-ltermcap",
+					"-lLLVMDemangle",
+					"-lLLVMSupport",
+					"-lLLVMCore",
+					"-lLLVMProfileData",
+					"-lLLVMAnalysis",
+					"-lLLVMBitReader",
+					"-lLLVMBitWriter",
+					"-lLLVMMC",
+					"-lLLVMTransformUtils",
+					"-lLLVMInstrumentation",
+					"-lLLVMInstCombine",
+					"-lLLVMScalarOpts",
+					"-lLLVMTarget",
+					"-lLLVMCodeGen",
+					"-lLLVMMCParser",
+					"-lLLVMObject",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMExecutionEngine",
+					"-lLLVMInterpreter",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = Marciok.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
+				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
 			name = Release;
 		};
