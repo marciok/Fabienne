@@ -53,5 +53,27 @@ class CodeGenTest: XCTestCase {
         
         XCTAssertTrue(expected == output)
     }
+    
+    func testDefinitionCall() {
+        let proto = Prototype(name: "foo", args: ["x" : nil])
+        let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
+        let definition = Function(prototype: proto, body: body)
+        
+        let protoLambda = Prototype(name: "", args: ["x" : nil])
+        let callExpr = Expression.callExpr("foo", .binaryExpr("+", .literalExpr(1), .literalExpr(1)))
+        let lambda = Function(prototype: protoLambda, body: callExpr)
+
+        let ast = [ASTNode.functionNode(definition), ASTNode.functionNode(lambda)]
+        
+        var ctx = Context.global()
+        let mod = SimpleModuleProvider(name: "Fabienne")
+        let expected = "; ModuleID = \'Fabienne\'source_filename = \"Fabienne\"define i32 @foo(i32 %x) {entry:  %addtemp = add i32 1, %x  ret i32 %addtemp}define i32 @0(i32 %x) {entry:  %calltmp = call i32 @foo(i32 2)  ret i32 %calltmp}"
+        
+        _ = try! ast.codeGenerate(context: &ctx, module: mod)
+        
+        let output = String(cString: LLVMPrintModuleToString(mod.module)).replacingOccurrences(of: "\n", with: "", options: [])
+        
+        XCTAssertTrue(expected == output)
+    }
 
 }
