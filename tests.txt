@@ -1,0 +1,3 @@
+def loo() 1+3 end loo()
+def foo(x) x+2*4 end foo(2) def bar(x) 2*x+(x+1) end bar(foo(2)) 
+

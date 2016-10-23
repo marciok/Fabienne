@@ -7,6 +7,7 @@
 //
 
 import Foundation
+let ModuleName = "Fabienne"
 
 
 //var input = readLine()
@@ -22,10 +23,8 @@ import Foundation
     print(ast)
     
     var ctx = Context.global()
-    let mod = SimpleModuleProvider(name: "Fabienne")
-    
+    let mod = SimpleModuleProvider(name: ModuleName)
     _ = try ast.codeGenerate(context: &ctx, module: mod)
-    
     mod.dump()
     
 

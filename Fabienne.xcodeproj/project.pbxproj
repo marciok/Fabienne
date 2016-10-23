@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		577985FB1DBA9F970052173F /* CodeGenTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577985FA1DBA9F970052173F /* CodeGenTest.swift */; };
+		577985FF1DBAA54F0052173F /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57893C0B1DBA91AD00F24E55 /* CodeGen.swift */; };
 		57893BFC1DBA713100F24E55 /* ASTNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52FA1DABD5E10069EF9B /* ASTNode.swift */; };
 		57893BFD1DBA8AFA00F24E55 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
 		57893BFE1DBA8AFB00F24E55 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
@@ -48,6 +50,7 @@
 		576B777D1D9D997400AFC611 /* ParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserTests.swift; sourceTree = "<group>"; };
 		576B777F1D9D997400AFC611 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		576F572F1DA7DEA900421112 /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexerTests.swift; sourceTree = "<group>"; };
+		577985FA1DBA9F970052173F /* CodeGenTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeGenTest.swift; sourceTree = "<group>"; };
 		577C0FE01D9C59CE005B7B06 /* Fabienne */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Fabienne; sourceTree = BUILT_PRODUCTS_DIR; };
 		57893C0B1DBA91AD00F24E55 /* CodeGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeGen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,6 +84,7 @@
 		576B777C1D9D997400AFC611 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				577985FA1DBA9F970052173F /* CodeGenTest.swift */,
 				576B777D1D9D997400AFC611 /* ParserTests.swift */,
 				576B777F1D9D997400AFC611 /* Info.plist */,
 				576A5A261DA6CE7700F56D91 /* InterpreterTests.swift */,
@@ -242,6 +246,8 @@
 				57893C061DBA8B0B00F24E55 /* ParserTests.swift in Sources */,
 				57893C051DBA8B0900F24E55 /* Parser.swift in Sources */,
 				57893C001DBA8AFE00F24E55 /* Lexer.swift in Sources */,
+				577985FB1DBA9F970052173F /* CodeGenTest.swift in Sources */,
+				577985FF1DBAA54F0052173F /* CodeGen.swift in Sources */,
 				57893C081DBA8B1000F24E55 /* LexerTests.swift in Sources */,
 				57893BFC1DBA713100F24E55 /* ASTNode.swift in Sources */,
 			);
@@ -278,27 +284,28 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				OTHER_LDFLAGS = (
-					"-lz",
-					"-ltermcap",
-					"-lLLVMDemangle",
-					"-lLLVMSupport",
-					"-lLLVMCore",
-					"-lLLVMProfileData",
-					"-lLLVMAnalysis",
-					"-lLLVMBitReader",
-					"-lLLVMBitWriter",
-					"-lLLVMMC",
-					"-lLLVMTransformUtils",
-					"-lLLVMInstrumentation",
-					"-lLLVMInstCombine",
-					"-lLLVMScalarOpts",
-					"-lLLVMTarget",
-					"-lLLVMCodeGen",
-					"-lLLVMMCParser",
-					"-lLLVMObject",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMExecutionEngine",
 					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMScalarOpts",
+					"-lLLVMInstCombine",
+					"-lLLVMInstrumentation",
+					"-lLLVMTransformUtils",
+					"-lLLVMMC",
+					"-lLLVMBitWriter",
+					"-lLLVMBitReader",
+					"-lLLVMAnalysis",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+					"-ltermcap",
+					"-lz",
+					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Marciok.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -316,27 +323,28 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				OTHER_LDFLAGS = (
-					"-lz",
-					"-ltermcap",
-					"-lLLVMDemangle",
-					"-lLLVMSupport",
-					"-lLLVMCore",
-					"-lLLVMProfileData",
-					"-lLLVMAnalysis",
-					"-lLLVMBitReader",
-					"-lLLVMBitWriter",
-					"-lLLVMMC",
-					"-lLLVMTransformUtils",
-					"-lLLVMInstrumentation",
-					"-lLLVMInstCombine",
-					"-lLLVMScalarOpts",
-					"-lLLVMTarget",
-					"-lLLVMCodeGen",
-					"-lLLVMMCParser",
-					"-lLLVMObject",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMExecutionEngine",
 					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMScalarOpts",
+					"-lLLVMInstCombine",
+					"-lLLVMInstrumentation",
+					"-lLLVMTransformUtils",
+					"-lLLVMMC",
+					"-lLLVMBitWriter",
+					"-lLLVMBitReader",
+					"-lLLVMAnalysis",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+					"-ltermcap",
+					"-lz",
+					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Marciok.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -393,8 +401,32 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMScalarOpts",
+					"-lLLVMInstCombine",
+					"-lLLVMInstrumentation",
+					"-lLLVMTransformUtils",
+					"-lLLVMMC",
+					"-lLLVMBitWriter",
+					"-lLLVMBitReader",
+					"-lLLVMAnalysis",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+					"-ltermcap",
+					"-lz",
+				);
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
 			name = Debug;
 		};
@@ -438,7 +470,31 @@
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lLLVMInterpreter",
+					"-lLLVMExecutionEngine",
+					"-lLLVMRuntimeDyld",
+					"-lLLVMObject",
+					"-lLLVMMCParser",
+					"-lLLVMCodeGen",
+					"-lLLVMTarget",
+					"-lLLVMScalarOpts",
+					"-lLLVMInstCombine",
+					"-lLLVMInstrumentation",
+					"-lLLVMTransformUtils",
+					"-lLLVMMC",
+					"-lLLVMBitWriter",
+					"-lLLVMBitReader",
+					"-lLLVMAnalysis",
+					"-lLLVMProfileData",
+					"-lLLVMCore",
+					"-lLLVMSupport",
+					"-lLLVMDemangle",
+					"-ltermcap",
+					"-lz",
+				);
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
 			name = Release;
 		};
@@ -452,6 +508,7 @@
 					__STDC_LIMIT_MACROS,
 					__STDC_CONSTANT_MACROS,
 				);
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
@@ -478,6 +535,7 @@
 					"-ltermcap",
 					"-lz",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = Fabienne;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
@@ -488,6 +546,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEFINES_MODULE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
@@ -514,6 +573,7 @@
 					"-ltermcap",
 					"-lz",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = Fabienne;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
