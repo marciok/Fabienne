@@ -14,8 +14,8 @@ let ModuleName = "Fabienne"
 
 //while input != ":q" {
 //    guard let content = input else { exit(0) }
-    let content = "def loo(x) 1+3+x end loo()"
-    
+    let content = "def f(a) a*a + a*a end"
+
     print("fab> ", terminator:"")
     var tokens = Lexer.tokenize(string: content)    
     var parser = Parser(tokens: tokens)
@@ -26,9 +26,9 @@ let ModuleName = "Fabienne"
     let mod = SimpleModuleProvider(name: ModuleName)
     _ = try ast.codeGenerate(context: &ctx, module: mod)
     mod.dump()
-    
 
 
+//
 //    for a in ast {
 //        do {
 //            let result = try Interpreter.eval(a)

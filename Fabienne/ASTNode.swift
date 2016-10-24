@@ -10,14 +10,14 @@ import Foundation
 
 public struct Prototype {
     let name: String
-    var args: [String : Int?] = [:]
+    var args: [(String, Int?)] = []
 }
 
 public indirect enum Expression {
     case literalExpr(Int)
     case variableExpr(String)
     case binaryExpr(String, Expression, Expression)
-    case callExpr(String, Expression)//TODO: Just one expression because it only takes one argument
+    case callExpr(String, [Expression])
 }
 
 public struct Function {

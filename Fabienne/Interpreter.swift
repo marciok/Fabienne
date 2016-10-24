@@ -45,12 +45,15 @@ public struct Interpreter {
         case .callExpr(let funName, let args):
             //1. Find fun 
             guard var function = functionsTable[funName] else { throw InterpreterError.undefinedFunction }
+            
             //2. Evaluate args
-            let argsResult = try evalExpression(args, ctx: ctx)
+            let argsResult = try args.map { try evalExpression($0, ctx: ctx) }
             
             //3. Bind args
-            if let firstArg = function.prototype.args.first {
-                function.prototype.args[firstArg.key] = argsResult
+            for index in 0..<argsResult.count {
+                var argument = function.prototype.args[index]
+                argument.1 = argsResult[index]
+                function.prototype.args[index] = argument
             }
             
             functionsTable[funName] = function
@@ -59,11 +62,14 @@ public struct Interpreter {
             return try evalExpression(function.body, ctx: function.prototype.name)
         case .variableExpr(let variable):
             guard let funName = ctx,
-                let function = functionsTable[funName],
-            let binding = function.prototype.args[variable],
-            let result = binding else { throw InterpreterError.undefinedVariable }
+                  let function = functionsTable[funName] else { throw InterpreterError.undefinedVariable }
             
-            return result
+            let binding = function.prototype.args.filter{ variable == $0.0 }.first
+            guard let result = binding, let num = result.1 else {
+                 throw InterpreterError.undefinedVariable
+            }
+            
+            return num
         }
     }
     

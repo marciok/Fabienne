@@ -173,7 +173,7 @@ struct Parser {
 //        }
     }
     
-    /// callExpression    : identifier '(' expression ')'
+    /// callExpression    : identifier '(' expression* ')'
     mutating func callExpression(_ id: String) throws -> Expression {
         
         if try peekCurrentToken() != .parensOpen {
@@ -185,24 +185,24 @@ struct Parser {
         if try peekCurrentToken() == .parensClose {
             _ = popCurrentToken() // Removing ')'
             
-            return .callExpr(id, Expression.literalExpr(0))
+            return .callExpr(id, [Expression.literalExpr(0)]) // If there's no arguments
         }
         
-       let expression = try self.expression()
-        
-        if try peekCurrentToken() != .parensClose {
-            throw ParsingError.invalidTokens(expecting: "Expecting: )")
+        var expressions: [Expression] = []
+        while try peekCurrentToken() != .parensClose {
+            let expression = try self.expression()
+            expressions.append(expression)
         }
         
         _ = popCurrentToken() // Removing ')'
         
-        return .callExpr(id, expression)
+        return .callExpr(id, expressions)
     }
     mutating func prototype() throws -> Prototype {
         
         switch try peekCurrentToken() {
         case .identifier:
-            var protoNode = Prototype(name: popCurrentToken().rawValue(), args: [:])
+            var protoNode = Prototype(name: popCurrentToken().rawValue(), args: [])
             
             if try peekCurrentToken() != .parensOpen {
                 throw ParsingError.invalidTokens(expecting: "Expecting: (")
@@ -212,8 +212,13 @@ struct Parser {
             
             switch try peekCurrentToken() {
             case .identifier:
-                let argument = popCurrentToken().rawValue() //TODO: Increase number of arguments
-                let args: [String : Int?] = [argument : nil]
+                
+                var args: [(String, Int?)] = []
+                while case let .identifier(id) = try peekCurrentToken() {
+                    args.append((id, nil))
+                    _ = popCurrentToken() // Removing variable
+                }
+                
                 protoNode.args = args
                 
                 if try peekCurrentToken() != .parensClose {
@@ -278,7 +283,7 @@ struct Parser {
             default:
                 let expr = try expression()
                 //Create a lambda
-                let proto = Prototype(name: "", args: [:])
+                let proto = Prototype(name: "", args: [])
                 let lambda = Function(prototype: proto, body: expr)
                 
                 nodes.append(ASTNode.functionNode(lambda))

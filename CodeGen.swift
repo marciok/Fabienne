@@ -76,21 +76,23 @@ extension Expression: IRBuilder {
             }
             
             throw CodeGenErrors.variableNotDeclared
-        case .callExpr(let funName, let expr):
-            guard let function = module.function(name: funName) else {
-                throw CodeGenErrors.unknownFunction
-            }
+        case .callExpr(let funName, let exprs):
+            guard let function = module.function(name: funName) else { throw CodeGenErrors.unknownFunction }
             
             //TODO: Handle incorrent number of parameters
             
-            let argValue = try expr.codeGenerate(context: &context, module: module)
+            var argValues: [IRResult] = []
+            for expr in exprs {
+                let argValue = try expr.codeGenerate(context: &context, module: module)
+                argValues.append(argValue)
+            }
             
-            let argPointer = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: 1)
-            argPointer.initialize(from: [argValue])
+            let argPointer = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: argValues.count)
+            argPointer.initialize(from: argValues)
             
-            defer { argPointer.deallocate(capacity: 1) }
+            defer { argPointer.deallocate(capacity: argValues.count) }
             
-            return LLVMBuildCall(context.builder, function, argPointer, 1, "calltmp")
+            return LLVMBuildCall(context.builder, function, argPointer, UInt32(argValues.count), "calltmp")
             
         case .binaryExpr(let op, let lhs, let rhs):
             let lhsResult = try lhs.codeGenerate(context: &context, module: module)
@@ -115,9 +117,10 @@ extension Function: IRBuilder {
         let basicBlock = LLVMAppendBasicBlockInContext(context.context, function, "entry")
         LLVMPositionBuilderAtEnd(context.builder, basicBlock)
         
-        let param = LLVMGetParam(function, 0)
-        if let arg = prototype.args.first {
-            context.namedValues[arg.key] = param
+        for index in 0..<prototype.args.count {
+            let param = LLVMGetParam(function, UInt32(index))
+            let key = prototype.args[index].0
+            context.namedValues[key] = param
         }
         
         let bodyCode = try body.codeGenerate(context: &context, module: module)
@@ -135,22 +138,23 @@ extension Function: IRBuilder {
 extension Prototype: IRBuilder {
     func codeGenerate(context: inout Context, module: ModuleProvider) throws -> IRResult {
         
-        if let _ = module.function(name: name) {
-            throw CodeGenErrors.functionAlreadyDefined
-        }
+        if let _ = module.function(name: name) { throw CodeGenErrors.functionAlreadyDefined }
         
-        let paramType = UnsafeMutablePointer<LLVMTypeRef?>.allocate(capacity: 1) //TODO: Replace for number of arguments
-        paramType.initialize(from: [context.type])
+        let paramType = UnsafeMutablePointer<LLVMTypeRef?>.allocate(capacity: self.args.count)
+        let argType = context.type
         
-        let funType = LLVMFunctionType(context.type, paramType, 1, 0)
+        paramType.initialize(from: self.args.map { _,_ in argType })
+        
+        let funType = LLVMFunctionType(context.type, paramType, UInt32(self.args.count), 0)
         
         let function = LLVMAddFunction(module.module, name, funType)
-        if let arg = args.first {
-            let param = LLVMGetParam(function, 0)
-            LLVMSetValueName(param, arg.key)
+        
+        for index in 0..<self.args.count {
+            let param = LLVMGetParam(function, UInt32(index))
+            LLVMSetValueName(param, self.args[index].0)
         }
         
-        defer { paramType.deallocate(capacity: 1) }
+        defer { paramType.deallocate(capacity: self.args.count) }
         
         return function
     }
