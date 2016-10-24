@@ -45,7 +45,7 @@ class CodeGenTest: XCTestCase {
         
         var ctx = Context.global()
         let mod = SimpleModuleProvider(name: "Fabienne")
-        let expected = "; ModuleID = \'Fabienne\'source_filename = \"Fabienne\"define i32 @foo(i32 %x) {entry:  %addtemp = add i32 1, %x  ret i32 %addtemp}"
+        let expected = "; ModuleID = \'Fabienne\'source_filename = \"Fabienne\"define i32 @foo(i32 %x) {entry:  %addtemp = add i32 %x, 1  ret i32 %addtemp}"
         
         _ = try! ast.codeGenerate(context: &ctx, module: mod)
         
@@ -67,7 +67,7 @@ class CodeGenTest: XCTestCase {
         
         var ctx = Context.global()
         let mod = SimpleModuleProvider(name: "Fabienne")
-        let expected = "; ModuleID = \'Fabienne\'source_filename = \"Fabienne\"define i32 @foo(i32 %x) {entry:  %addtemp = add i32 1, %x  ret i32 %addtemp}define i32 @0(i32 %x) {entry:  %calltmp = call i32 @foo(i32 2)  ret i32 %calltmp}"
+        let expected = "; ModuleID = \'Fabienne\'source_filename = \"Fabienne\"define i32 @foo(i32 %x) {entry:  %addtemp = add i32 %x, 1  ret i32 %addtemp}define i32 @0(i32 %x) {entry:  %calltmp = call i32 @foo(i32 2)  ret i32 %calltmp}"
         
         _ = try! ast.codeGenerate(context: &ctx, module: mod)
         

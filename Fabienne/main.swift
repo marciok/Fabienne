@@ -14,7 +14,7 @@ let ModuleName = "Fabienne"
 
 //while input != ":q" {
 //    guard let content = input else { exit(0) }
-    let content = "def f(a) a*a + a*a end"
+    let content = "def test(x) (1+2+x)*(x+(1+2)) end"
 
     print("fab> ", terminator:"")
     var tokens = Lexer.tokenize(string: content)    

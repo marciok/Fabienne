@@ -36,14 +36,24 @@ struct Context {
 protocol ModuleProvider {
     func dump()
     var module: LLVMModuleRef { get }
+    var functionPassManager: LLVMPassManagerRef { get }
     func function(name: String) -> LLVMTypeRef?
 }
 
 struct SimpleModuleProvider {
     let module: LLVMModuleRef
+    let functionPassManager: LLVMPassManagerRef
     
     init(name: String) {
         self.module = LLVMModuleCreateWithName(name)
+        self.functionPassManager = LLVMCreateFunctionPassManagerForModule(self.module)
+        
+        LLVMAddBasicAliasAnalysisPass(self.functionPassManager)
+        LLVMAddInstructionCombiningPass(self.functionPassManager)
+        LLVMAddReassociatePass(self.functionPassManager)
+        LLVMAddGVNPass(self.functionPassManager)
+//        LLVMAddCFGSimplificationPass(self.functionPassManager) //TODO: Will be needed when if is available
+        LLVMInitializeFunctionPassManager(self.functionPassManager)
     }
 }
 
@@ -127,7 +137,9 @@ extension Function: IRBuilder {
         
         LLVMBuildRet(context.builder, bodyCode) //Last instruction is the return
         
-        //Needs verify here?
+        //Needs verify here? (verify LLVMAbortProcessAction)
+        
+        LLVMRunFunctionPassManager(module.functionPassManager, function)
         
         context.namedValues.removeAll()
         
