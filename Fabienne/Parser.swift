@@ -198,6 +198,8 @@ struct Parser {
         
         return .callExpr(id, expressions)
     }
+    
+    ///    prototype         : identifier '(' [identifier] ')'
     mutating func prototype() throws -> Prototype {
         
         switch try peekCurrentToken() {
@@ -241,6 +243,7 @@ struct Parser {
         
     }
     
+    /// definition        : def prototype expression end
     mutating func definition() throws -> Function {
         _ = popCurrentToken() // Removing 'def'
         let proto = try prototype()
@@ -282,7 +285,7 @@ struct Parser {
                 nodes.append(ASTNode.functionNode(def))
             default:
                 let expr = try expression()
-                //Create a lambda
+                //Create lambda
                 let proto = Prototype(name: "", args: [])
                 let lambda = Function(prototype: proto, body: expr)
                 
