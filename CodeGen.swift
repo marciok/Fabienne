@@ -15,6 +15,7 @@ enum CodeGenErrors : Error {
     case functionAlreadyDefined
     case variableNotDeclared
     case undefinedOperator
+    case numberOfArgsDoNotMatch
 }
 
 struct Context {
@@ -34,37 +35,45 @@ struct Context {
 }
 
 protocol ModuleProvider {
-    func dump()
     var module: LLVMModuleRef { get }
-    var functionPassManager: LLVMPassManagerRef { get }
+    func dump()
+    func createFunctionPassManager() -> LLVMPassManagerRef?
     func function(name: String) -> LLVMTypeRef?
 }
 
-struct SimpleModuleProvider {
-    let module: LLVMModuleRef
-    let functionPassManager: LLVMPassManagerRef
-    
-    init(name: String) {
-        self.module = LLVMModuleCreateWithName(name)
-        self.functionPassManager = LLVMCreateFunctionPassManagerForModule(self.module)
-        
-        LLVMAddBasicAliasAnalysisPass(self.functionPassManager)
-        LLVMAddInstructionCombiningPass(self.functionPassManager)
-        LLVMAddReassociatePass(self.functionPassManager)
-        LLVMAddGVNPass(self.functionPassManager)
-//        LLVMAddCFGSimplificationPass(self.functionPassManager) //TODO: Will be needed when if is available
-        LLVMInitializeFunctionPassManager(self.functionPassManager)
-    }
-}
-
-extension SimpleModuleProvider: ModuleProvider {
-    
+extension ModuleProvider {
     func function(name: String) -> LLVMTypeRef? {
         return LLVMGetNamedFunction(module, name)
     }
     
     func dump() {
         LLVMDumpModule(module)
+    }
+    
+    func createFunctionPassManager() -> LLVMPassManagerRef? {
+        
+        let functionPassManager = LLVMCreateFunctionPassManagerForModule(module)
+        add(optimization: functionPassManager)
+        
+        return functionPassManager
+    }
+    
+    func add(optimization pass: LLVMPassManagerRef?) {
+        LLVMAddBasicAliasAnalysisPass(pass)
+        LLVMAddInstructionCombiningPass(pass)
+        LLVMAddReassociatePass(pass)
+        LLVMAddGVNPass(pass)
+        LLVMAddCFGSimplificationPass(pass)
+        LLVMInitializeFunctionPassManager(pass)
+    }
+}
+
+//TODO: Is currently not being used (only for testing)
+struct SimpleModuleProvider: ModuleProvider {
+    let module: LLVMModuleRef
+    
+    init(name: String) {
+        self.module = LLVMModuleCreateWithName(name)
     }
 }
 
@@ -89,7 +98,7 @@ extension Expression: IRBuilder {
         case .callExpr(let funName, let exprs):
             guard let function = module.function(name: funName) else { throw CodeGenErrors.unknownFunction }
             
-            //TODO: Handle incorrent number of parameters
+            if LLVMCountParams(function) != UInt32(exprs.count) { throw CodeGenErrors.numberOfArgsDoNotMatch }
             
             var argValues: [IRResult] = []
             for expr in exprs {
@@ -137,9 +146,9 @@ extension Function: IRBuilder {
         
         LLVMBuildRet(context.builder, bodyCode) //Last instruction is the return
         
-        //Needs verify here? (verify LLVMAbortProcessAction)
+        LLVMVerifyFunction(function, LLVMAbortProcessAction)
         
-        LLVMRunFunctionPassManager(module.functionPassManager, function)
+        LLVMRunFunctionPassManager(module.createFunctionPassManager(), function)
         
         context.namedValues.removeAll()
         
@@ -190,6 +199,7 @@ extension Collection where Iterator.Element == ASTNode {
         
         for node in self {
             result = try node.codeGenerate(context: &context, module: module)
+            
         }
         
         return result

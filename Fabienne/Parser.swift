@@ -185,7 +185,7 @@ struct Parser {
         if try peekCurrentToken() == .parensClose {
             _ = popCurrentToken() // Removing ')'
             
-            return .callExpr(id, [Expression.literalExpr(0)]) // If there's no arguments
+            return .callExpr(id, []) // If there are no arguments
         }
         
         var expressions: [Expression] = []

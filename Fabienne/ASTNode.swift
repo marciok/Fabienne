@@ -23,6 +23,12 @@ public indirect enum Expression {
 public struct Function {
     var prototype: Prototype
     let body: Expression
+    
+    var isAnonymous: Bool {
+        get {
+            return prototype.name == ""
+        }
+    }
 }
 
 public enum ASTNode {
@@ -52,7 +58,6 @@ extension Function: CustomStringConvertible {
         return "\(prototype.description): \(body.description)"
     }
 }
-
 
 extension Expression: CustomStringConvertible {
     

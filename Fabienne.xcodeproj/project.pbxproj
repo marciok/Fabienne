@@ -24,6 +24,8 @@
 		57893C081DBA8B1000F24E55 /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F572F1DA7DEA900421112 /* LexerTests.swift */; };
 		57893C091DBA8B1E00F24E55 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F61DABD5A80069EF9B /* main.swift */; };
 		57893C0C1DBA91AD00F24E55 /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57893C0B1DBA91AD00F24E55 /* CodeGen.swift */; };
+		57965A301DBFB7E000D6A7E6 /* JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57965A2F1DBFB7E000D6A7E6 /* JIT.swift */; };
+		57965A351DBFFC2500D6A7E6 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57965A341DBFFC2500D6A7E6 /* Driver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +55,8 @@
 		577985FA1DBA9F970052173F /* CodeGenTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeGenTest.swift; sourceTree = "<group>"; };
 		577C0FE01D9C59CE005B7B06 /* Fabienne */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Fabienne; sourceTree = BUILT_PRODUCTS_DIR; };
 		57893C0B1DBA91AD00F24E55 /* CodeGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeGen.swift; sourceTree = "<group>"; };
+		57965A2F1DBFB7E000D6A7E6 /* JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JIT.swift; sourceTree = "<group>"; };
+		57965A341DBFFC2500D6A7E6 /* Driver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +116,7 @@
 		577C0FD71D9C59CD005B7B06 = {
 			isa = PBXGroup;
 			children = (
+				57965A311DBFDBCD00D6A7E6 /* Driver */,
 				57893C0A1DBA91A000F24E55 /* LLVM */,
 				576F57351DA81EC300421112 /* Utils */,
 				576F57311DA7E10D00421112 /* Lexer */,
@@ -146,8 +151,17 @@
 			isa = PBXGroup;
 			children = (
 				57893C0B1DBA91AD00F24E55 /* CodeGen.swift */,
+				57965A2F1DBFB7E000D6A7E6 /* JIT.swift */,
 			);
 			name = LLVM;
+			sourceTree = "<group>";
+		};
+		57965A311DBFDBCD00D6A7E6 /* Driver */ = {
+			isa = PBXGroup;
+			children = (
+				57965A341DBFFC2500D6A7E6 /* Driver.swift */,
+			);
+			name = Driver;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,8 +274,10 @@
 				57893C011DBA8B0100F24E55 /* Interpreter.swift in Sources */,
 				57893BFF1DBA8AFD00F24E55 /* Lexer.swift in Sources */,
 				57893C091DBA8B1E00F24E55 /* main.swift in Sources */,
+				57965A301DBFB7E000D6A7E6 /* JIT.swift in Sources */,
 				57893C041DBA8B0800F24E55 /* Parser.swift in Sources */,
 				57893C031DBA8B0400F24E55 /* ASTNode.swift in Sources */,
+				57965A351DBFFC2500D6A7E6 /* Driver.swift in Sources */,
 				57893C0C1DBA91AD00F24E55 /* CodeGen.swift in Sources */,
 				57893BFD1DBA8AFA00F24E55 /* StringExtensions.swift in Sources */,
 			);
@@ -284,25 +300,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				OTHER_LDFLAGS = (
-					"-lLLVMInterpreter",
-					"-lLLVMExecutionEngine",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMObject",
-					"-lLLVMMCParser",
-					"-lLLVMCodeGen",
-					"-lLLVMTarget",
-					"-lLLVMScalarOpts",
-					"-lLLVMInstCombine",
-					"-lLLVMInstrumentation",
-					"-lLLVMTransformUtils",
-					"-lLLVMMC",
-					"-lLLVMBitWriter",
-					"-lLLVMBitReader",
-					"-lLLVMAnalysis",
-					"-lLLVMProfileData",
-					"-lLLVMCore",
-					"-lLLVMSupport",
-					"-lLLVMDemangle",
+					"$(LLVM_LIBS)",
 					"-ltermcap",
 					"-lz",
 					"-lc++",
@@ -323,25 +321,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				OTHER_LDFLAGS = (
-					"-lLLVMInterpreter",
-					"-lLLVMExecutionEngine",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMObject",
-					"-lLLVMMCParser",
-					"-lLLVMCodeGen",
-					"-lLLVMTarget",
-					"-lLLVMScalarOpts",
-					"-lLLVMInstCombine",
-					"-lLLVMInstrumentation",
-					"-lLLVMTransformUtils",
-					"-lLLVMMC",
-					"-lLLVMBitWriter",
-					"-lLLVMBitReader",
-					"-lLLVMAnalysis",
-					"-lLLVMProfileData",
-					"-lLLVMCore",
-					"-lLLVMSupport",
-					"-lLLVMDemangle",
+					"$(LLVM_LIBS)",
 					"-ltermcap",
 					"-lz",
 					"-lc++",
@@ -396,31 +376,13 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
-				LLVM_LIBS = "-lLLVMAnalysis -lLLVMCore -lLLVMSupport";
+				LLVM_LIBS = "-lLLVMLTO -lLLVMPasses -lLLVMObjCARCOpts -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMMIRParser -lLLVMCoverage -lLLVMTableGen -lLLVMOrcJIT -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMLanaiDisassembler -lLLVMLanaiCodeGen -lLLVMLanaiAsmParser -lLLVMLanaiDesc -lLLVMLanaiInstPrinter -lLLVMLanaiInfo -lLLVMHexagonDisassembler -lLLVMHexagonCodeGen -lLLVMHexagonAsmParser -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMBPFCodeGen -lLLVMBPFDesc -lLLVMBPFInfo -lLLVMBPFAsmPrinter -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMAMDGPUDisassembler -lLLVMAMDGPUCodeGen -lLLVMAMDGPUAsmParser -lLLVMAMDGPUDesc -lLLVMAMDGPUInfo -lLLVMAMDGPUAsmPrinter -lLLVMAMDGPUUtils -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMGlobalISel -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMObjectYAML -lLLVMLibDriver -lLLVMOption -lgtest_main -lgtest -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMMCJIT -lLLVMLineEditor -lLLVMInterpreter -lLLVMExecutionEngine -lLLVMRuntimeDyld -lLLVMCodeGen -lLLVMTarget -lLLVMBitWriter -lLLVMCoroutines -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize -lLLVMScalarOpts -lLLVMObject -lLLVMMCParser -lLLVMMC -lLLVMLinker -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMInstCombine -lLLVMTransformUtils -lLLVMAnalysis -lLLVMProfileData -lLLVMCore -lLLVMSupport -lLLVMDemangle";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lLLVMInterpreter",
-					"-lLLVMExecutionEngine",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMObject",
-					"-lLLVMMCParser",
-					"-lLLVMCodeGen",
-					"-lLLVMTarget",
-					"-lLLVMScalarOpts",
-					"-lLLVMInstCombine",
-					"-lLLVMInstrumentation",
-					"-lLLVMTransformUtils",
-					"-lLLVMMC",
-					"-lLLVMBitWriter",
-					"-lLLVMBitReader",
-					"-lLLVMAnalysis",
-					"-lLLVMProfileData",
-					"-lLLVMCore",
-					"-lLLVMSupport",
-					"-lLLVMDemangle",
+					"$(LLVM_LIBS)",
 					"-ltermcap",
 					"-lz",
 				);
@@ -466,30 +428,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
-				LLVM_LIBS = "-lLLVMAnalysis -lLLVMCore -lLLVMSupport";
+				LLVM_LIBS = "-lLLVMLTO -lLLVMPasses -lLLVMObjCARCOpts -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMMIRParser -lLLVMCoverage -lLLVMTableGen -lLLVMOrcJIT -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMLanaiDisassembler -lLLVMLanaiCodeGen -lLLVMLanaiAsmParser -lLLVMLanaiDesc -lLLVMLanaiInstPrinter -lLLVMLanaiInfo -lLLVMHexagonDisassembler -lLLVMHexagonCodeGen -lLLVMHexagonAsmParser -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMBPFCodeGen -lLLVMBPFDesc -lLLVMBPFInfo -lLLVMBPFAsmPrinter -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMAMDGPUDisassembler -lLLVMAMDGPUCodeGen -lLLVMAMDGPUAsmParser -lLLVMAMDGPUDesc -lLLVMAMDGPUInfo -lLLVMAMDGPUAsmPrinter -lLLVMAMDGPUUtils -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMGlobalISel -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMObjectYAML -lLLVMLibDriver -lLLVMOption -lgtest_main -lgtest -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMMCJIT -lLLVMLineEditor -lLLVMInterpreter -lLLVMExecutionEngine -lLLVMRuntimeDyld -lLLVMCodeGen -lLLVMTarget -lLLVMBitWriter -lLLVMCoroutines -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize -lLLVMScalarOpts -lLLVMObject -lLLVMMCParser -lLLVMMC -lLLVMLinker -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMInstCombine -lLLVMTransformUtils -lLLVMAnalysis -lLLVMProfileData -lLLVMCore -lLLVMSupport -lLLVMDemangle";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lLLVMInterpreter",
-					"-lLLVMExecutionEngine",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMObject",
-					"-lLLVMMCParser",
-					"-lLLVMCodeGen",
-					"-lLLVMTarget",
-					"-lLLVMScalarOpts",
-					"-lLLVMInstCombine",
-					"-lLLVMInstrumentation",
-					"-lLLVMTransformUtils",
-					"-lLLVMMC",
-					"-lLLVMBitWriter",
-					"-lLLVMBitReader",
-					"-lLLVMAnalysis",
-					"-lLLVMProfileData",
-					"-lLLVMCore",
-					"-lLLVMSupport",
-					"-lLLVMDemangle",
+					"$(LLVM_LIBS)",
 					"-ltermcap",
 					"-lz",
 				);
@@ -513,25 +457,7 @@
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				OTHER_LDFLAGS = (
-					"-lLLVMInterpreter",
-					"-lLLVMExecutionEngine",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMObject",
-					"-lLLVMMCParser",
-					"-lLLVMCodeGen",
-					"-lLLVMTarget",
-					"-lLLVMScalarOpts",
-					"-lLLVMInstCombine",
-					"-lLLVMInstrumentation",
-					"-lLLVMTransformUtils",
-					"-lLLVMMC",
-					"-lLLVMBitWriter",
-					"-lLLVMBitReader",
-					"-lLLVMAnalysis",
-					"-lLLVMProfileData",
-					"-lLLVMCore",
-					"-lLLVMSupport",
-					"-lLLVMDemangle",
+					"$(LLVM_LIBS)",
 					"-ltermcap",
 					"-lz",
 				);
@@ -551,25 +477,7 @@
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
 				OTHER_LDFLAGS = (
-					"-lLLVMInterpreter",
-					"-lLLVMExecutionEngine",
-					"-lLLVMRuntimeDyld",
-					"-lLLVMObject",
-					"-lLLVMMCParser",
-					"-lLLVMCodeGen",
-					"-lLLVMTarget",
-					"-lLLVMScalarOpts",
-					"-lLLVMInstCombine",
-					"-lLLVMInstrumentation",
-					"-lLLVMTransformUtils",
-					"-lLLVMMC",
-					"-lLLVMBitWriter",
-					"-lLLVMBitReader",
-					"-lLLVMAnalysis",
-					"-lLLVMProfileData",
-					"-lLLVMCore",
-					"-lLLVMSupport",
-					"-lLLVMDemangle",
+					"$(LLVM_LIBS)",
 					"-ltermcap",
 					"-lz",
 				);

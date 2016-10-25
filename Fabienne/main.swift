@@ -7,44 +7,8 @@
 //
 
 import Foundation
-let ModuleName = "Fabienne"
 
-
-//var input = readLine()
-
-//while input != ":q" {
-//    guard let content = input else { exit(0) }
-    let content = "def test(x) (1+2+x)*(x+(1+2)) end"
-
-    print("fab> ", terminator:"")
-    var tokens = Lexer.tokenize(string: content)    
-    var parser = Parser(tokens: tokens)
-    let ast = try parser.parse()
-    print(ast)
-    
-    var ctx = Context.global()
-    let mod = SimpleModuleProvider(name: ModuleName)
-    _ = try ast.codeGenerate(context: &ctx, module: mod)
-    mod.dump()
-
-
-//
-//    for a in ast {
-//        do {
-//            let result = try Interpreter.eval(a)
-//            if let r = result {
-//                print(r)
-//            } else {
-//                print("nil")
-//            }
-//        } catch let error {
-//            print(error)
-//        }
-//
-//    }
-//
-//    input = readLine()
-//}
+Driver.mainLoop()
 
 
 
