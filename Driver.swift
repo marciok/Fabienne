@@ -14,10 +14,12 @@ struct Driver {
         let ModuleName = "Fabienne"
         var ctx = Context.global()
         let mod = MCJIT(name: ModuleName)
+        print("Greeting to Fabienne REPL 🍻")
         
-        var input = readLine()
+        var input: String?
         
         while input != ":q" {
+            input = readLine()
             guard let content = input else { continue }
             //    let content = "def test(x) (1+2+x)*(x+(1+2)) end"
             
@@ -41,9 +43,9 @@ struct Driver {
                 }
             } catch let error {
                 print(error)
+                //TODO: Maybe clean last instruction?
             }
             
-            input = readLine()
         }
     }
 }
