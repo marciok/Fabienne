@@ -19,10 +19,9 @@ struct Driver {
         var input: String?
         
         while input != ":q" {
+            print("> ", separator: "", terminator: "")
             input = readLine()
             guard let content = input else { continue }
-            //    let content = "def test(x) (1+2+x)*(x+(1+2)) end"
-            
             let tokens = Lexer.tokenize(string: content)
             var parser = Parser(tokens: tokens)
             
@@ -39,7 +38,6 @@ struct Driver {
                         }
                         mod.dump()
                     }
-                    
                 }
             } catch let error {
                 print(error)
