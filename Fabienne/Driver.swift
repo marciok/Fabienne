@@ -16,9 +16,9 @@ struct Driver {
         let mod = MCJIT(name: ModuleName)
         print("🐙  Greetings to Fabienne REPL 🍻")
         
-        let commands = CommandLine.arguments
-        let displayAST = commands.contains("--ast")
-        let displayIR = commands.contains("--ir")
+        let args = CommandLine.arguments
+        let displayAST = args.contains("--ast")
+        let displayIR = args.contains("--ir")
         
         var input: String?
         
