@@ -5,4 +5,4 @@ before_install:
   - gem install xcpretty
 script:
   - set -o pipefail
-  - xcodebuild test -skip-testing:Tests/CodeGenTest -scheme Fabienne | xcpretty
+  - xcodebuild test -skip-testing:Tests/CodeGenTest -scheme Fabienne -target Tests | xcpretty
