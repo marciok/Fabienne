@@ -95,6 +95,48 @@ extension Expression: IRBuilder {
             }
             
             throw CodeGenErrors.variableNotDeclared
+        case .conditionalExpr(condExpr: let condExpr, thenExpr: let thenExpr, elseExpression: let elseExpr):
+            
+            let ifCondExprCode = try condExpr.codeGenerate(context: &context, module: module)
+            let zero = LLVMConstInt(context.type, UInt64(0), 0)
+            
+            let ifCond = LLVMBuildICmp(context.builder, LLVMIntNE, ifCondExprCode, zero, "ifcond")
+            
+            let block = LLVMGetInsertBlock(context.builder)
+            let function = LLVMGetBasicBlockParent(block)
+            let thenBlock = LLVMAppendBasicBlockInContext(context.context, function, "then")
+            let elseBlock = LLVMAppendBasicBlockInContext(context.context, function, "else")
+            let mergeBlock = LLVMAppendBasicBlockInContext(context.context, function, "ifcont")
+            
+            LLVMBuildCondBr(context.builder, ifCond, thenBlock, elseBlock)
+            
+            LLVMPositionBuilderAtEnd(context.builder, thenBlock)
+            let thenCode = try thenExpr.codeGenerate(context: &context, module: module)
+            LLVMBuildBr(context.builder, mergeBlock)
+            let thenEndBlock = LLVMGetInsertBlock(context.builder)
+            
+            LLVMPositionBuilderAtEnd(context.builder, elseBlock)
+            let elseCode = try elseExpr.codeGenerate(context: &context, module: module)
+            LLVMBuildBr(context.builder, mergeBlock)
+            let elseEndBlock = LLVMGetInsertBlock(context.builder)
+            
+            LLVMPositionBuilderAtEnd(context.builder, mergeBlock)
+            
+            let phi = LLVMBuildPhi(context.builder, context.type, "ifphi")
+            
+            let incomingValues = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: MemoryLayout<LLVMValueRef>.stride * 2)
+            incomingValues.initialize(from: [thenCode, elseCode])
+            let incomingBlocks = UnsafeMutablePointer<LLVMBasicBlockRef?>.allocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride * 2)
+            incomingBlocks.initialize(from: [thenEndBlock, elseEndBlock])
+            
+            LLVMAddIncoming(phi, incomingValues, incomingBlocks, 2)
+            
+            defer {
+                incomingBlocks.deallocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride * 2)
+                incomingValues.deallocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride * 2)
+            }
+        
+            return phi
         case .callExpr(let funName, let exprs):
             guard let function = module.function(name: funName) else { throw CodeGenErrors.unknownFunction }
             
@@ -122,6 +164,12 @@ extension Expression: IRBuilder {
             case "-": return LLVMBuildSub(context.builder, lhsResult, rhsResult, "subtemp")
             case "*": return LLVMBuildMul(context.builder, lhsResult, rhsResult, "multemp")
             case "/": return LLVMBuildSDiv(context.builder, lhsResult, rhsResult, "divtemp")
+            case "<":
+                let cmp = LLVMBuildICmp(context.builder, LLVMIntSLT, lhsResult, rhsResult, "cmptmp")
+                //TODO: Fix this hack, convert UI -> SI directly
+                let cmp2 =  LLVMBuildUIToFP(context.builder, cmp, LLVMDoubleType(), "cmptmpT")
+                
+                return LLVMBuildFPToSI(context.builder, cmp2, context.type, "booltmp")
             default:
                 throw CodeGenErrors.undefinedOperator
             }

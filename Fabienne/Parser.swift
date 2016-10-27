@@ -21,9 +21,11 @@ public enum ParsingError: Error {
  
  prototype         : identifier '(' [identifier] ')'
 
- expression        : [primaryExpression (binaryOperator primaryExpression)* ]
+ expression        : [ primaryExpression (binaryOperator primaryExpression)* ]
  
- primaryExpression : [number | identifier | callExpression | '(' expression ')']
+ primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression ]
+ 
+ ifExpression      : if expression then expression else expression
  
  callExpression    : identifier '(' expression ')'
  
@@ -39,6 +41,7 @@ struct Parser {
     var tokens: [Token]
     var index = 0
     let operatorPrecedence: [String: Int] = [
+        "<": 10,
         "+": 20,
         "-": 20,
         "*": 40,
@@ -118,7 +121,7 @@ struct Parser {
         }
     }
     
-    /// primaryExpression -> number | identifier | callExpression | '(' expression ')'
+    /// primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression ]
     mutating func primaryExpression() throws -> Expression {
         let currentToken = try peekCurrentToken()
         
@@ -152,6 +155,8 @@ struct Parser {
             }
             
             return iden
+        case ._if:
+            return try ifExpression()
             
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
@@ -171,6 +176,27 @@ struct Parser {
 //        default:
 //            throw ParsingError.invalidTokens(expecting: "Expecting operator")
 //        }
+    }
+    
+    /// ifExpression      : if expression then expression else expression
+    mutating func ifExpression() throws -> Expression {
+        _ = popCurrentToken() // Removing 'if'
+        let condExpression = try expression()
+        
+        if popCurrentToken() != .then {
+            throw ParsingError.invalidTokens(expecting: "then")
+        }
+        
+        let thenExpression = try expression()
+        
+        if popCurrentToken() != ._else {
+            throw ParsingError.invalidTokens(expecting: "else")
+        }
+        
+        let elseExpression = try expression()
+        
+        
+        return .conditionalExpr(condExpr: condExpression, thenExpr: thenExpression, elseExpression: elseExpression)
     }
     
     /// callExpression    : identifier '(' expression* ')'

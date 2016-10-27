@@ -18,24 +18,21 @@ var functionsTable: [String : Function] = [:]
 
 public struct Interpreter {
     
-    static func evalExpression(_ expression: Expression, ctx: String? = nil) throws -> Int {
+    static func eval(expression: Expression, ctx: String? = nil) throws -> Int {
         
         switch expression {
         case .binaryExpr(let op, let lhs, let rhs):
-            let lhsResult = try evalExpression(lhs, ctx: ctx)
-            let rhsResult = try evalExpression(rhs, ctx: ctx)
+            let lhsResult = try eval(expression: lhs, ctx: ctx)
+            let rhsResult = try eval(expression: rhs, ctx: ctx)
             
             //TOOD: Let's make that dynamic in the future
             
             switch op {
-            case "+":
-                return lhsResult + rhsResult
-            case "-":
-                return lhsResult - rhsResult
-            case "*":
-                return lhsResult * rhsResult
-            case "/":
-                return lhsResult / rhsResult
+            case "+": return lhsResult + rhsResult
+            case "-": return lhsResult - rhsResult
+            case "*": return lhsResult * rhsResult
+            case "/": return lhsResult / rhsResult
+            case ">": return lhsResult > rhsResult ? 1 : 0
             default:
                 throw InterpreterError.undefinedFunction
             }
@@ -47,7 +44,7 @@ public struct Interpreter {
             guard var function = functionsTable[funName] else { throw InterpreterError.undefinedFunction }
             
             //2. Evaluate args
-            let argsResult = try args.map { try evalExpression($0, ctx: ctx) }
+            let argsResult = try args.map { try eval(expression: $0, ctx: ctx) }
             
             //3. Bind args
             for index in 0..<argsResult.count {
@@ -59,7 +56,17 @@ public struct Interpreter {
             functionsTable[funName] = function
             
             //4. Evaluate body
-            return try evalExpression(function.body, ctx: function.prototype.name)
+            return try eval(expression: function.body, ctx: function.prototype.name)
+        case .conditionalExpr(condExpr: let condExpr, thenExpr: let thenExpr, elseExpression: let elseExpr):
+            
+            let condResult = try eval(expression: condExpr)
+            
+            if condResult != 0 {
+                return try eval(expression: thenExpr)
+            }
+            
+           return try eval(expression: elseExpr)
+        
         case .variableExpr(let variable):
             guard let funName = ctx,
                   let function = functionsTable[funName] else { throw InterpreterError.undefinedVariable }
@@ -79,7 +86,7 @@ public struct Interpreter {
         case.functionNode(let fun):
             
             if fun.prototype.name.isEmpty {
-                return try evalExpression(fun.body)
+                return try eval(expression: fun.body)
             }
             
             functionsTable[fun.prototype.name] = fun
