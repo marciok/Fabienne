@@ -18,6 +18,8 @@ public indirect enum Expression {
     case variableExpr(String)
     case binaryExpr(String, Expression, Expression)
     case callExpr(String, [Expression])
+    case conditionalExpr(condExpr: Expression, thenExpr:
+        Expression, elseExpression: Expression)
 }
 
 public struct Function {
@@ -25,9 +27,7 @@ public struct Function {
     let body: Expression
     
     var isAnonymous: Bool {
-        get {
-            return prototype.name == ""
-        }
+        get { return prototype.name == "" }
     }
 }
 
@@ -69,8 +69,11 @@ extension Expression: CustomStringConvertible {
             return String(num)
         case .variableExpr(let variable):
             return variable
-        case.callExpr(let iden, let expr):
+        case .callExpr(let iden, let expr):
             return iden + expr.description
+        case .conditionalExpr(condExpr: let cond, thenExpr: let thenExpr, elseExpression:let elseExpr):
+            
+            return "if \(cond) then \(thenExpr) else \(elseExpr)"
         }
         
     }

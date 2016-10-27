@@ -42,7 +42,8 @@ struct MCJIT: JITter {
         }
         
         let value = LLVMRunFunction(executionEngine.pointee, function, 0, nil)
-        let finalResult = Int(LLVMGenericValueToInt(value, 0))
+        
+        let finalResult = Int(Int64(bitPattern: LLVMGenericValueToInt(value, 1)))
         
         LLVMDeleteFunction(function)
         

@@ -134,6 +134,20 @@ class ParserTests: XCTestCase {
         XCTAssert(String(describing: lambda) == String(describing: tree))
     }
     
+    func test_condExpression() {
+        let tokens: [Token] = [._if ,.number(2), .other("<"),  .number(4), .then, .number(8), ._else, .number(18)]
+        let condExpr = Expression.conditionalExpr(condExpr: .binaryExpr("<", .literalExpr(2), .literalExpr(4)), thenExpr: .literalExpr(8), elseExpression: .literalExpr(18))
+        
+        let proto = Prototype(name: "", args: [])
+        let lambda = Function(prototype: proto, body: condExpr)
+        
+        var parser = Parser(tokens: tokens)
+        let tree = try! parser.parse().first!
+        
+        XCTAssert(String(describing: lambda) == String(describing: tree))
+    }
+
+    
     func test_declareAndcallExpression() {
         let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen, .identifier("x"), .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd, .identifier("foo"), .parensOpen,  .number(4),  .parensClose]
         

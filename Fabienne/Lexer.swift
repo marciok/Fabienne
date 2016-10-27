@@ -16,6 +16,9 @@ public enum Token {
     case identifier(String)
     case definitionBegin
     case definitionEnd
+    case _if
+    case then
+    case _else
     
     func rawValue() -> String {
         
@@ -34,6 +37,12 @@ public enum Token {
             return "def"
         case .definitionEnd:
             return "end"
+        case ._if:
+            return "if"
+        case .then:
+            return "then"
+        case ._else:
+            return "else"
         }
     }
     
@@ -58,14 +67,20 @@ public struct Lexer {
             ("\\(", { _ in .parensOpen }),
             ("[ ]", { _ in nil }),
             ("[a-zA-Z][a-zA-Z0-9]*", {
-                
-                if $0 == Token.definitionBegin.rawValue() {
+                switch $0 {
+                case Token.definitionBegin.rawValue():
                     return .definitionBegin
-                } else if $0 == Token.definitionEnd.rawValue() {
+                case Token.definitionEnd.rawValue():
                     return .definitionEnd
+                case Token._if.rawValue():
+                    return ._if
+                case Token._else.rawValue():
+                    return ._else
+                case Token.then.rawValue():
+                    return .then
+                default:
+                    return .identifier($0)
                 }
-                
-                return .identifier($0)
             }),
             ("[0-9]+", { (r: String) in
                 guard let n = Int(r) else { return nil }

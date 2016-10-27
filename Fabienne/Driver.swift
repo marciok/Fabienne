@@ -43,11 +43,10 @@ struct Driver {
                     case .functionNode(let fun):
                         if fun.isAnonymous {
                             print(try mod.run(function: result!))
-                            
-                            continue
                         }
                         
                         if displayIR { mod.dump() }
+                        continue
                     }
                 }
             } catch let error {
