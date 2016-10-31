@@ -186,7 +186,7 @@ extension Function: IRBuilder {
         
         for index in 0..<prototype.args.count {
             let param = LLVMGetParam(function, UInt32(index))
-            let key = prototype.args[index].0
+            let key = prototype.args[index]
             context.namedValues[key] = param
         }
         
@@ -212,7 +212,7 @@ extension Prototype: IRBuilder {
         let paramType = UnsafeMutablePointer<LLVMTypeRef?>.allocate(capacity: self.args.count)
         let argType = context.type
         
-        paramType.initialize(from: self.args.map { _,_ in argType })
+        paramType.initialize(from: self.args.map { _ in argType })
         
         let funType = LLVMFunctionType(context.type, paramType, UInt32(self.args.count), 0)
         
@@ -220,7 +220,7 @@ extension Prototype: IRBuilder {
         
         for index in 0..<self.args.count {
             let param = LLVMGetParam(function, UInt32(index))
-            LLVMSetValueName(param, self.args[index].0)
+            LLVMSetValueName(param, self.args[index])
         }
         
         defer { paramType.deallocate(capacity: self.args.count) }

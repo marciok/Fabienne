@@ -14,11 +14,12 @@ struct Driver {
         let ModuleName = "Fabienne"
         var ctx = Context.global()
         let mod = MCJIT(name: ModuleName)
-        print("🐙  Greetings to Fabienne REPL 🍻")
+        print("🐙  Welcome to Fabienne REPL 🍻")
         
         let args = CommandLine.arguments
         let displayAST = args.contains("--ast")
         let displayIR = args.contains("--ir")
+        let useNativeInterpreter = args.contains("--use-native-interpreter")
         
         var input: String?
         
@@ -35,6 +36,14 @@ struct Driver {
                 let ast = try parser.parse()
                 for node in ast {
                     
+                    if useNativeInterpreter {
+                        let result = try Interpreter.eval(node: node)
+                        print(result ?? "")
+                        
+                        continue
+                        
+                    }
+                    
                     if displayAST { print(ast) }
                     
                     let result = try node.codeGenerate(context: &ctx, module: mod)
@@ -50,7 +59,7 @@ struct Driver {
                     }
                 }
             } catch let error {
-                print("\u{001B}[0;31m ❌  \(error.localizedDescription) \u{001B}[0m")
+                print("\u{001B}[0;31m ❌  \(error) \u{001B}[0m")
                 //TODO: Maybe clean last instruction?
             }
         }

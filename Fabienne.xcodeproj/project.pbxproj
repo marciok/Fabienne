@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		570243051DC2A2BF00117903 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F41DABD5990069EF9B /* Interpreter.swift */; };
 		57703C721DC007A800FF331B /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C711DC007A800FF331B /* Driver.swift */; };
 		57703C751DC007C000FF331B /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C731DC007C000FF331B /* CodeGen.swift */; };
 		57703C761DC007C000FF331B /* JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C741DC007C000FF331B /* JIT.swift */; };
@@ -270,6 +271,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				570243051DC2A2BF00117903 /* Interpreter.swift in Sources */,
 				57893BFF1DBA8AFD00F24E55 /* Lexer.swift in Sources */,
 				57703C761DC007C000FF331B /* JIT.swift in Sources */,
 				57893C091DBA8B1E00F24E55 /* main.swift in Sources */,

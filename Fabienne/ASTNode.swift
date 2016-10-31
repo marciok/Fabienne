@@ -10,7 +10,7 @@ import Foundation
 
 public struct Prototype {
     let name: String
-    var args: [(String, Int?)] = []
+    var args: [String] = []
 }
 
 public indirect enum Expression {
