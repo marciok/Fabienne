@@ -219,6 +219,10 @@ class ParserTests: XCTestCase {
         }
     }
     
+    func testToFail()  {
+        XCTFail()
+    }
+    
 //    func test_invalidTokensExpectingValidOperator() {
 //        let tokens: [Token] = [.number(1), .number(2)]
 //        var expectedError: Error? = nil
