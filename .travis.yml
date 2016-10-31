@@ -1,8 +1,0 @@
-osx_image: xcode8
-language: objective-c
-
-before_install:
-  - gem install xcpretty
-script:
-  - set -o pipefail
-  - xcodebuild test -skip-testing:Tests/CodeGenTest -scheme Fabienne -target Tests | xcpretty
