@@ -112,7 +112,7 @@ class ParserTests: XCTestCase {
     func test_definitionDeclaration() {
      let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd]
         
-        let proto = Prototype(name: "foo", args: [("x", nil)])
+        let proto = Prototype(name: "foo", args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let definition = Function(prototype: proto, body: body)
         
@@ -151,7 +151,7 @@ class ParserTests: XCTestCase {
     func test_declareAndcallExpression() {
         let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen, .identifier("x"), .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd, .identifier("foo"), .parensOpen,  .number(4),  .parensClose]
         
-        let protoFoo = Prototype(name: "foo", args: [("x", nil)])
+        let protoFoo = Prototype(name: "foo", args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let funcFoo = Function(prototype: protoFoo, body: body)
         

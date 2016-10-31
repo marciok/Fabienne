@@ -38,7 +38,7 @@ class CodeGenTest: XCTestCase {
     }
     
     func testDefinition() {
-        let proto = Prototype(name: "foo", args: [("x", nil)])
+        let proto = Prototype(name: "foo", args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let definition = Function(prototype: proto, body: body)
         let ast = ASTNode.functionNode(definition)
@@ -55,11 +55,11 @@ class CodeGenTest: XCTestCase {
     }
     
     func testDefinitionCall() {
-        let proto = Prototype(name: "foo", args: [("x", nil)])
+        let proto = Prototype(name: "foo", args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let definition = Function(prototype: proto, body: body)
         
-        let protoLambda = Prototype(name: "", args: [("x", nil)])
+        let protoLambda = Prototype(name: "", args: ["x"])
         let callExpr = Expression.callExpr("foo", [.binaryExpr("+", .literalExpr(1), .literalExpr(1))])
         let lambda = Function(prototype: protoLambda, body: callExpr)
 

@@ -17,7 +17,7 @@ class InterpreterTests: XCTestCase {
         let lambda = Function(prototype: proto, body: binExpr)
         let nodes = ASTNode.functionNode(lambda)
         
-        let result = try! Interpreter.eval(nodes)
+        let result = try! Interpreter.eval(node: nodes)
         
         XCTAssertTrue(expectedResult == result)
     }
@@ -29,7 +29,7 @@ class InterpreterTests: XCTestCase {
         let lambda = Function(prototype: proto, body: binExpr)
         let nodes = ASTNode.functionNode(lambda)
         
-        let result = try! Interpreter.eval(nodes)
+        let result = try! Interpreter.eval(node: nodes)
         
         XCTAssertTrue(expectedResult == result)
     }
@@ -41,33 +41,33 @@ class InterpreterTests: XCTestCase {
         let lambda = Function(prototype: proto, body: binExpr)
         let nodes = ASTNode.functionNode(lambda)
         
-        let result = try! Interpreter.eval(nodes)
+        let result = try! Interpreter.eval(node: nodes)
         
         XCTAssertTrue(expectedResult == result)
     }
     
     func test_ResultDeclaringFunction() {
         let body = Expression.binaryExpr("/", .variableExpr("x"), .literalExpr(2))
-        let proto = Prototype(name: "foo", args: [("x", nil)])
+        let proto = Prototype(name: "foo", args: ["x"])
         let function = Function(prototype: proto, body: body)
         let nodes = ASTNode.functionNode(function)
         
-        let result = try! Interpreter.eval(nodes)
+        let result = try! Interpreter.eval(node: nodes)
         
         XCTAssertNil(result)
     }
     
     func test_ResultDeclaringFunctionAndCalling() {
         let body = Expression.binaryExpr("/", .variableExpr("x"), .literalExpr(2))
-        let proto = Prototype(name: "foo", args: [("x", nil)])
+        let proto = Prototype(name: "foo", args: ["x"])
         let function = Function(prototype: proto, body: body)
         let nodes = ASTNode.functionNode(function)
         
         let callExpr = Expression.callExpr("foo", [.literalExpr(8)])
         let lambda = ASTNode.functionNode(Function(prototype: Prototype(name: "", args: []), body: callExpr))
         
-        _ = try! Interpreter.eval(nodes)
-        let result = try! Interpreter.eval(lambda)
+        _ = try! Interpreter.eval(node: nodes)
+        let result = try! Interpreter.eval(node: lambda)
         
         XCTAssertTrue(result == 4)
     }
