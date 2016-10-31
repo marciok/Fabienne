@@ -1,5 +1,6 @@
 node  {
   git url: 'https://github.com/marciok/Fabienne'
-  sh "xcodebuild test -skip-testing:Tests/CodeGenTest -scheme Fabienne -target Tests"
+  sh "xcodebuild test -scheme Fabienne -target Tests"
 }
+stage "Test application"
 
