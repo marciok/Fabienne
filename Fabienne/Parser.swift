@@ -88,9 +88,7 @@ struct Parser {
             return -1
         }
         
-        guard let precedence = operatorPrecedence[op] else {
-            throw ParsingError.invalidTokens(expecting: "some operator")
-        }
+        guard let precedence = operatorPrecedence[op] else { throw ParsingError.invalidTokens(expecting: "Invalid operator") }
         
         return precedence
     }
@@ -241,9 +239,9 @@ struct Parser {
             switch try peekCurrentToken() {
             case .identifier:
                 
-                var args: [(String, Int?)] = []
+                var args: [String] = []
                 while case let .identifier(id) = try peekCurrentToken() {
-                    args.append((id, nil))
+                    args.append(id)
                     _ = popCurrentToken() // Removing variable
                 }
                 
