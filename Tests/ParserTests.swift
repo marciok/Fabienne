@@ -11,7 +11,7 @@ import XCTest
 class ParserTests: XCTestCase {
     
     func test_binaryExpressionWithoutParenthesis(){
-        let tokens: [Token] = [.number(1), .other("+"), .number(2)]
+        let tokens: [Token] = [.number(1), ._operator("+"), .number(2)]
         let binExpr = Expression.binaryExpr("+", .literalExpr(1), .literalExpr(2))
         let proto = Prototype(name: "", args: [])
         let lambda = Function(prototype: proto, body: binExpr)
@@ -22,7 +22,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_binaryExpressionWithIdentifier(){
-        let tokens: [Token] = [.number(1), .other("+"), .identifier("x")]
+        let tokens: [Token] = [.number(1), ._operator("+"), .identifier("x")]
         let binExpr = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let proto = Prototype(name: "", args: [])
         let lambda = Function(prototype: proto, body: binExpr)
@@ -33,7 +33,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_expressionWithoutParenthesis(){
-        let tokens: [Token] = [.number(3), .other("-"), .number(4), .other("+"), .number(2)]
+        let tokens: [Token] = [.number(3), ._operator("-"), .number(4), ._operator("+"), .number(2)]
         let lhs = Expression.binaryExpr("-", .literalExpr(3), .literalExpr(4))
         let binExpr = Expression.binaryExpr("+", lhs, .literalExpr(2))
         let proto = Prototype(name: "", args: [])
@@ -45,7 +45,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_validInputWithParemIndie() {
-        let tokens: [Token] = [.number(5), .other("-"), .parensOpen, .number(2), .other("+"), .number(3), .parensClose]
+        let tokens: [Token] = [.number(5), ._operator("-"), .parensOpen, .number(2), ._operator("+"), .number(3), .parensClose]
         let rhs = Expression.binaryExpr("+", .literalExpr(2), .literalExpr(3))
         let binExpr = Expression.binaryExpr("-", .literalExpr(5), rhs)
         let proto = Prototype(name: "", args: [])
@@ -57,7 +57,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_validInputWithParem() {
-        let tokens: [Token] = [.number(1), .other("+"), .parensOpen, .number(2), .other("+"), .parensOpen, .number(3), .other("-"), .number(2), .parensClose, .parensClose]
+        let tokens: [Token] = [.number(1), ._operator("+"), .parensOpen, .number(2), ._operator("+"), .parensOpen, .number(3), ._operator("-"), .number(2), .parensClose, .parensClose]
         
         let lhs1 = Expression.binaryExpr("-", .literalExpr(3), .literalExpr(2))
         let rhs = Expression.binaryExpr("+", .literalExpr(2), lhs1)
@@ -72,7 +72,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_multiplication()  {
-        let tokens: [Token] = [.number(3), .other("*"), .number(2)]
+        let tokens: [Token] = [.number(3), ._operator("*"), .number(2)]
         let binExpr = Expression.binaryExpr("*", .literalExpr(3), .literalExpr(2))
         let proto = Prototype(name: "", args: [])
         let lambda = Function(prototype: proto, body: binExpr)
@@ -84,7 +84,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_OperatorPrecedence()  {
-        let tokens: [Token] = [.number(2), .other("+"), .number(3), .other("*"), .number(5)]
+        let tokens: [Token] = [.number(2), ._operator("+"), .number(3), ._operator("*"), .number(5)]
         let rhs = Expression.binaryExpr("*", .literalExpr(3), .literalExpr(5))
         let binExpr = Expression.binaryExpr("+", .literalExpr(2), rhs)
         let proto = Prototype(name: "", args: [])
@@ -97,7 +97,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_ParenthesisOverOperatorPrecedence()  {
-        let tokens: [Token] = [.parensOpen, .number(2), .other("+"),  .number(3), .parensClose, .other("*"), .number(5)]
+        let tokens: [Token] = [.parensOpen, .number(2), ._operator("+"),  .number(3), .parensClose, ._operator("*"), .number(5)]
         let rhs = Expression.binaryExpr("+", .literalExpr(2), .literalExpr(3))
         let binExpr = Expression.binaryExpr("*", rhs, .literalExpr(5))
         let proto = Prototype(name: "", args: [])
@@ -110,7 +110,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_definitionDeclaration() {
-     let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd]
+     let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), ._operator("+"), .identifier("x"), .definitionEnd]
         
         let proto = Prototype(name: "foo", args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
@@ -135,7 +135,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_condExpression() {
-        let tokens: [Token] = [._if ,.number(2), .other("<"),  .number(4), .then, .number(8), ._else, .number(18)]
+        let tokens: [Token] = [._if ,.number(2), ._operator("<"),  .number(4), .then, .number(8), ._else, .number(18)]
         let condExpr = Expression.conditionalExpr(condExpr: .binaryExpr("<", .literalExpr(2), .literalExpr(4)), thenExpr: .literalExpr(8), elseExpression: .literalExpr(18))
         
         let proto = Prototype(name: "", args: [])
@@ -149,7 +149,7 @@ class ParserTests: XCTestCase {
 
     
     func test_declareAndcallExpression() {
-        let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen, .identifier("x"), .parensClose, .number(1), .other("+"), .identifier("x"), .definitionEnd, .identifier("foo"), .parensOpen,  .number(4),  .parensClose]
+        let tokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen, .identifier("x"), .parensClose, .number(1), ._operator("+"), .identifier("x"), .definitionEnd, .identifier("foo"), .parensOpen,  .number(4),  .parensClose]
         
         let protoFoo = Prototype(name: "foo", args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
@@ -169,7 +169,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_callExpressionWithOtherExpresssion() {
-        let tokens: [Token] = [.identifier("foo"), .parensOpen,  .number(2), .other("+"), .number(2),  .parensClose]
+        let tokens: [Token] = [.identifier("foo"), .parensOpen,  .number(2), ._operator("+"), .number(2),  .parensClose]
         let expr = Expression.binaryExpr("+", .literalExpr(2), .literalExpr(2))
         let callExpr = Expression.callExpr("foo", [expr])
         let proto = Prototype(name: "", args: [])
@@ -182,7 +182,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_invalidInputNoNumbers() {
-        let tokens: [Token] = [.parensOpen, .number(1), .other("+"), .number(2)]
+        let tokens: [Token] = [.parensOpen, .number(1), ._operator("+"), .number(2)]
         var expectedError: Error? = nil
         
         do {
@@ -201,7 +201,7 @@ class ParserTests: XCTestCase {
     }
     
     func test_invalidTokensExpectingNumber() {
-        let tokens: [Token] = [.number(1), .other("+"), .other("-")]
+        let tokens: [Token] = [.number(1), ._operator("+"), ._operator("-")]
         var expectedError: Error? = nil
         
         do {

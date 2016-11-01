@@ -72,7 +72,7 @@ struct Parser {
     
     mutating func binaryOperator() throws -> String {
         
-        guard case let .other(op) = popCurrentToken() else {
+        guard case let ._operator(op) = popCurrentToken() else {
             throw ParsingError.invalidTokens(expecting: "Expecting Operator")
         }
         
@@ -84,7 +84,7 @@ struct Parser {
             return -1
         }
         
-        guard case let Token.other(op) = try peekCurrentToken() else {
+        guard case let Token._operator(op) = try peekCurrentToken() else {
             return -1
         }
         

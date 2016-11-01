@@ -11,7 +11,7 @@ import Foundation
 public enum Token {
     case parensOpen
     case parensClose
-    case other(String)
+    case _operator(String)
     case number(Int)
     case identifier(String)
     case definitionBegin
@@ -27,7 +27,7 @@ public enum Token {
             return "("
         case .parensClose:
             return ")"            
-        case .other(let op):
+        case ._operator(let op):
             return op
         case .number(let num):
             return String(num)
@@ -86,7 +86,8 @@ public struct Lexer {
                 guard let n = Int(r) else { return nil }
                 return .number(n)
             }),
-            ("\\)", { _ in .parensClose })
+            ("\\)", { _ in .parensClose }),
+            ("\\S", { ._operator($0) })
         ]
         
         var tokens = [Token]()
@@ -109,7 +110,6 @@ public struct Lexer {
             
             if !matched {
                 let index = content.characters.index(content.startIndex, offsetBy: 1)
-                tokens.append(.other(content.substring(to: index)))
                 content = content.substring(from: index)
             }
         }

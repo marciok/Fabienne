@@ -8,8 +8,7 @@
 
 import Foundation
 
-Driver.mainLoop()
+let args = CommandLine.arguments
+let option = try! DriverOption(arguments: args)
 
-
-
-
+try! Driver.mainLoop(option)

@@ -78,10 +78,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--use-native-interpreter"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--ir"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--file /Users/MarcioK/Projects/Fabienne/Fabienne/hello.fab"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
