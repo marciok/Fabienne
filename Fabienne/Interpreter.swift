@@ -50,8 +50,6 @@ public struct Interpreter {
             var bindings = Array(zip(function.prototype.args, argsResult))
             bindings += ctx
             
-            print(bindings)
-            
             //4. Evaluate body
             let result = try eval(expression: function.body, ctx: bindings)
             
