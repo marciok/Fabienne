@@ -11,15 +11,16 @@ import Foundation
 struct Driver {
     static func mainLoop() {
         
-        let ModuleName = "Fabienne"
-        var ctx = Context.global()
-        let mod = MCJIT(name: ModuleName)
-        print("🐙  Welcome to Fabienne REPL 🍻")
-        
         let args = CommandLine.arguments
         let displayAST = args.contains("--ast")
         let displayIR = args.contains("--ir")
         let useNativeInterpreter = args.contains("--use-native-interpreter")
+        
+        let ModuleName = "Fabienne"
+        var ctx = Context.global()
+        let mod = MCJIT(name: ModuleName)
+        
+        print("🐙  Welcome to Fabienne REPL 🍻")
         
         var input: String?
         
@@ -41,7 +42,6 @@ struct Driver {
                         print(result ?? "")
                         
                         continue
-                        
                     }
                     
                     if displayAST { print(ast) }
