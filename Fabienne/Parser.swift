@@ -17,6 +17,10 @@ public enum ParsingError: Error {
  
  program           : [definition | expression]*;
  
+ statement         : [declaration | definition];
+ 
+ declaration       : prefix prototype
+ 
  definition        : def prototype expression end
  
  prototype         : identifier '(' [identifier] ')'
@@ -119,7 +123,7 @@ struct Parser {
         }
     }
     
-    /// primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression ]
+    /// primaryExpression : [ number | identifier | callExpression | callExternExpression | '(' expression ')' | ifExpression ]
     mutating func primaryExpression() throws -> Expression {
         let currentToken = try peekCurrentToken()
         
@@ -155,13 +159,26 @@ struct Parser {
             return iden
         case ._if:
             return try ifExpression()
-            
+        case .prefix:
+            return try callExternExpression()
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
         }
     }
     
-    /// expression -> [primaryExpression (binaryOperator primaryExpression)* ];
+    /// callExternExpression : prefix callExpression
+    mutating func callExternExpression() throws -> Expression {
+        _ = popCurrentToken() // Removing prefix (Later try to get language)
+        let iden = try identifier()
+        
+        guard case let .variableExpr(id) = iden else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier")
+        }
+        
+        return try callExpression(id)
+    }
+    
+    /// expression : [primaryExpression (binaryOperator primaryExpression)* ];
     mutating func expression() throws -> Expression {
         
         let primaryExprNode = try primaryExpression()
@@ -303,6 +320,17 @@ struct Parser {
         var nodes = [ASTNode]()
         while index < tokens.count {
             switch try peekCurrentToken() {
+            case .prefix(let name):
+                _ = popCurrentToken() // Removing prefix
+                
+                if  name != "_ext_ " {
+                    throw ParsingError.invalidTokens(expecting: "Does not know this prefix")
+                }
+                
+                let proto = try prototype()
+                
+                nodes.append(ASTNode.prefixedFunctionNode(proto))
+                
             case .definitionBegin:
                 let def = try definition()
                 

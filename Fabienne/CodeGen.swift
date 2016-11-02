@@ -234,6 +234,8 @@ extension ASTNode: IRBuilder {
         switch self {
         case .functionNode(let fun):
             return try fun.codeGenerate(context: &context, module: module)
+        case .prefixedFunctionNode(let proto):
+            return try proto.codeGenerate(context: &context, module: module)
         }
     }
 }

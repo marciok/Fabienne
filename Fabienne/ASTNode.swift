@@ -33,6 +33,7 @@ public struct Function {
 
 public enum ASTNode {
     case functionNode(Function)
+    case prefixedFunctionNode(Prototype)
 }
 
 extension ASTNode: CustomStringConvertible {
@@ -41,6 +42,8 @@ extension ASTNode: CustomStringConvertible {
         switch self {
         case .functionNode(let fun):
             return fun.description
+        case .prefixedFunctionNode(let proto):
+            return proto.description
         }
     }
 }

@@ -13,6 +13,7 @@ public enum Token {
     case parensClose
     case _operator(String)
     case number(Int)
+    case prefix(String)
     case identifier(String)
     case definitionBegin
     case definitionEnd
@@ -41,12 +42,14 @@ public enum Token {
             return "if"
         case .then:
             return "then"
+        case .prefix(let name):
+            return name
         case ._else:
             return "else"
         }
     }
     
-    static func ==(lhs: Token, rhs: Token) -> Bool {
+    static func == (lhs: Token, rhs: Token) -> Bool {
         return lhs.rawValue() == rhs.rawValue()
     }
     
@@ -66,6 +69,7 @@ public struct Lexer {
         let tokensGenerator: [(String, TokenGenerator)] = [
             ("\\(", { _ in .parensOpen }),
             ("[ ]", { _ in nil }),
+            ("_[a-z]*_\\s", { .prefix($0) }), //TODO: will have to change once there're more then one type
             ("[a-zA-Z][a-zA-Z0-9]*", {
                 switch $0 {
                 case Token.definitionBegin.rawValue():
