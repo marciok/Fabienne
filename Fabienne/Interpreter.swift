@@ -75,13 +75,17 @@ public struct Interpreter {
     public static func eval(node: ASTNode) throws -> Int? {
         
         switch node {
-        case.functionNode(let fun):
+        case .functionNode(let fun):
             
             if fun.isAnonymous {
                 return try eval(expression: fun.body, ctx: [])
             }
             
             functionsTable[fun.prototype.name] = fun
+        case .prefixedFunctionNode:
+            print("TODO: NOT DOING ANYTHING")
+            break;
+            
         }
         
         return nil

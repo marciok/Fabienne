@@ -40,15 +40,7 @@ struct DriverOption {
 
 struct Driver {
     
-    static func run(from input: String, withOption: DriverOption) throws  {
-        
-        var ctx: Context?
-        var mod: JITter?
-        
-        if !option.useNativeInterpreter {
-            ctx = Context.global()
-            mod = MCJIT(name: "Fabienne")
-        }
+    private static func run(from input: String, withOption: DriverOption, module: MCJIT?, context: inout Context?) throws  {
         
         let tokens = Lexer.tokenize(string: input)
         var parser = Parser(tokens: tokens)
@@ -65,15 +57,20 @@ struct Driver {
                 continue
             }
             
-            let codeGenerated = try node.codeGenerate(context: &ctx!, module: mod!)
+            let codeGenerated = try node.codeGenerate(context: &context!, module: module!)
             
             switch node {
+            case .prefixedFunctionNode:
+                
+                if option.printIR { module?.dump() }
+                
+                continue
             case .functionNode(let fun):
                 if fun.isAnonymous {
-                    print(try mod!.run(function: codeGenerated!))
+                    print(try module!.run(function: codeGenerated!))
                 }
                 
-                if option.printIR { mod?.dump() }
+                if option.printIR { module?.dump() }
                 
                 continue
             }
@@ -82,9 +79,17 @@ struct Driver {
     
     static func mainLoop(_ option: DriverOption) throws {
         
+        var ctx: Context?
+        var mod: JITter?
+        
+        if !option.useNativeInterpreter {
+            ctx = Context.global()
+            mod = MCJIT(name: "main")
+        }
+        
         // Reading from file
         if let fileContent = option.readFromFile {
-            try run(from: fileContent, withOption: option)
+            try run(from: fileContent, withOption: option, module: mod as! MCJIT?, context: &ctx)
             
             return
         }
@@ -100,7 +105,7 @@ struct Driver {
             if content == ":q" { exit(EXIT_SUCCESS) }
             
             do {
-                try run(from: content, withOption: option)
+                try run(from: content, withOption: option, module: mod as! MCJIT?, context: &ctx)
             } catch let error {
                 print("\u{001B}[0;31m ❌  \(error) \u{001B}[0m")
                 //TODO: Maybe clean last instruction?
