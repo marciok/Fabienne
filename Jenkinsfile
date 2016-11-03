@@ -1,6 +1,6 @@
 node  {
   git url: 'https://github.com/marciok/Fabienne'
-  sh "xcodebuild test -scheme Fabienne -target Tests"
+  sh "ruby ./Tests/test.rb"
 }
 stage "Test application"
 
