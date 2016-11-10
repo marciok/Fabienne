@@ -67,7 +67,8 @@ struct Driver {
                 continue
             case .functionNode(let fun):
                 if fun.isAnonymous {
-                    print(try module!.run(function: codeGenerated!))
+                    let result = try module!.run(function: codeGenerated!)
+                    print(result)
                 }
                 
                 if option.printIR { module?.dump() }

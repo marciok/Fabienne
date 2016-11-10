@@ -15,6 +15,7 @@ public enum InterpreterError: Error {
 }
 
 var functionsTable: [String : Function] = [:]
+var getTable: [String : Function] = [:]
 
 public struct Interpreter {
     
@@ -40,6 +41,17 @@ public struct Interpreter {
         case .literalExpr(let num):
             return num
         case .callExpr(let funName, let args):
+            //If it's a web handler
+            if funName == "get" {
+                let argsResult = try args.map { try eval(expression: $0, ctx: ctx) }
+
+                let handler = ["/\(argsResult.first!)" : { argsResult[1] }]
+                let server = HTTPServer(socket: Socket(), handlers: handler)
+                try server.start()
+                
+                return 0
+            }
+            
             //1. Find fun 
             guard let function = functionsTable[funName] else { throw InterpreterError.undefinedFunction }
             
