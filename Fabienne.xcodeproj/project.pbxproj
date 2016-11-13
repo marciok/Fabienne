@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		570243051DC2A2BF00117903 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F41DABD5990069EF9B /* Interpreter.swift */; };
+		5734C7751DD2346A00CBAF40 /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5734C7741DD2346A00CBAF40 /* HTTPServer.swift */; };
 		57703C721DC007A800FF331B /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C711DC007A800FF331B /* Driver.swift */; };
 		57703C751DC007C000FF331B /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C731DC007C000FF331B /* CodeGen.swift */; };
 		57703C761DC007C000FF331B /* JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C741DC007C000FF331B /* JIT.swift */; };
@@ -27,6 +28,7 @@
 		57893C081DBA8B1000F24E55 /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F572F1DA7DEA900421112 /* LexerTests.swift */; };
 		57893C091DBA8B1E00F24E55 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F61DABD5A80069EF9B /* main.swift */; };
 		57DA6FF01DC0FB95002D39C5 /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C731DC007C000FF331B /* CodeGen.swift */; };
+		57FCACF11DD3CBF9007AA8FE /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5734C7741DD2346A00CBAF40 /* HTTPServer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +44,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5734C7741DD2346A00CBAF40 /* HTTPServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPServer.swift; sourceTree = "<group>"; };
 		575C52F41DABD5990069EF9B /* Interpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Interpreter.swift; path = Fabienne/Interpreter.swift; sourceTree = "<group>"; };
 		575C52F61DABD5A80069EF9B /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Fabienne/main.swift; sourceTree = SOURCE_ROOT; };
 		575C52F71DABD5A80069EF9B /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Parser.swift; path = Fabienne/Parser.swift; sourceTree = SOURCE_ROOT; };
@@ -119,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				5779D7771DD64AF6003D5E33 /* fabstdlib.c */,
+				57FCACF01DD3B1AE007AA8FE /* stdlib */,
 				57965A311DBFDBCD00D6A7E6 /* Driver */,
 				57893C0A1DBA91A000F24E55 /* LLVM */,
 				576F57351DA81EC300421112 /* Utils */,
@@ -165,6 +169,14 @@
 				57703C711DC007A800FF331B /* Driver.swift */,
 			);
 			name = Driver;
+			sourceTree = "<group>";
+		};
+		57FCACF01DD3B1AE007AA8FE /* stdlib */ = {
+			isa = PBXGroup;
+			children = (
+				5734C7741DD2346A00CBAF40 /* HTTPServer.swift */,
+			);
+			name = stdlib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,6 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57FCACF11DD3CBF9007AA8FE /* HTTPServer.swift in Sources */,
 				57893C021DBA8B0200F24E55 /* Interpreter.swift in Sources */,
 				57893C071DBA8B0D00F24E55 /* InterpreterTests.swift in Sources */,
 				57893BFE1DBA8AFB00F24E55 /* StringExtensions.swift in Sources */,
@@ -278,6 +291,7 @@
 				570243051DC2A2BF00117903 /* Interpreter.swift in Sources */,
 				57893BFF1DBA8AFD00F24E55 /* Lexer.swift in Sources */,
 				57703C761DC007C000FF331B /* JIT.swift in Sources */,
+				5734C7751DD2346A00CBAF40 /* HTTPServer.swift in Sources */,
 				57893C091DBA8B1E00F24E55 /* main.swift in Sources */,
 				57893C041DBA8B0800F24E55 /* Parser.swift in Sources */,
 				5779D7781DD64AF6003D5E33 /* fabstdlib.c in Sources */,
