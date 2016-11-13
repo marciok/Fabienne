@@ -17,6 +17,9 @@ public enum Token {
     case identifier(String)
     case definitionBegin
     case definitionEnd
+    case comma
+    case _for
+    case _in
     case _if
     case then
     case _else
@@ -42,6 +45,12 @@ public enum Token {
             return "if"
         case .then:
             return "then"
+        case ._for:
+            return "for"
+        case .comma:
+            return ","
+        case ._in:
+            return "in"
         case .prefix(let name):
             return name
         case ._else:
@@ -58,8 +67,6 @@ public enum Token {
     }
 }
 
-
-
 typealias TokenGenerator = (String) -> Token?
 
 public struct Lexer {
@@ -69,6 +76,7 @@ public struct Lexer {
         let tokensGenerator: [(String, TokenGenerator)] = [
             ("\\(", { _ in .parensOpen }),
             ("[ ]", { _ in nil }),
+            ("[,]", { _ in .comma }),
             ("_[a-z]*_\\s", { .prefix($0) }), //TODO: will have to change once there're more then one type
             ("[a-zA-Z][a-zA-Z0-9]*", {
                 switch $0 {
@@ -82,6 +90,10 @@ public struct Lexer {
                     return ._else
                 case Token.then.rawValue():
                     return .then
+                case Token._for.rawValue():
+                    return ._for
+                case Token._in.rawValue():
+                    return ._in
                 default:
                     return .identifier($0)
                 }

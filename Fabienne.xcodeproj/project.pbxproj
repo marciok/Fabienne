@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		570243051DC2A2BF00117903 /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52F41DABD5990069EF9B /* Interpreter.swift */; };
 		5734C7751DD2346A00CBAF40 /* HTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5734C7741DD2346A00CBAF40 /* HTTPServer.swift */; };
+		576F2F851DD9279D0020F33C /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576F2F841DD9279D0020F33C /* Print.swift */; };
 		57703C721DC007A800FF331B /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C711DC007A800FF331B /* Driver.swift */; };
 		57703C751DC007C000FF331B /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C731DC007C000FF331B /* CodeGen.swift */; };
 		57703C761DC007C000FF331B /* JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C741DC007C000FF331B /* JIT.swift */; };
@@ -54,6 +55,7 @@
 		576B777B1D9D997400AFC611 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		576B777D1D9D997400AFC611 /* ParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserTests.swift; sourceTree = "<group>"; };
 		576B777F1D9D997400AFC611 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		576F2F841DD9279D0020F33C /* Print.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Print.swift; sourceTree = "<group>"; };
 		576F572F1DA7DEA900421112 /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexerTests.swift; sourceTree = "<group>"; };
 		57703C711DC007A800FF331B /* Driver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Driver.swift; path = Fabienne/Driver.swift; sourceTree = "<group>"; };
 		57703C731DC007C000FF331B /* CodeGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CodeGen.swift; path = Fabienne/CodeGen.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				5734C7741DD2346A00CBAF40 /* HTTPServer.swift */,
+				576F2F841DD9279D0020F33C /* Print.swift */,
 			);
 			name = stdlib;
 			sourceTree = "<group>";
@@ -229,6 +232,7 @@
 					};
 					577C0FDF1D9C59CD005B7B06 = {
 						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 0810;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -291,6 +295,7 @@
 				57893C091DBA8B1E00F24E55 /* main.swift in Sources */,
 				57893C041DBA8B0800F24E55 /* Parser.swift in Sources */,
 				57703C721DC007A800FF331B /* Driver.swift in Sources */,
+				576F2F851DD9279D0020F33C /* Print.swift in Sources */,
 				57703C751DC007C000FF331B /* CodeGen.swift in Sources */,
 				57893C031DBA8B0400F24E55 /* ASTNode.swift in Sources */,
 				57893BFD1DBA8AFA00F24E55 /* StringExtensions.swift in Sources */,
@@ -462,6 +467,7 @@
 		577C0FE81D9C59CE005B7B06 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -470,6 +476,7 @@
 					__STDC_CONSTANT_MACROS,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
@@ -480,6 +487,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Fabienne;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
@@ -488,8 +496,10 @@
 		577C0FE91D9C59CE005B7B06 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";

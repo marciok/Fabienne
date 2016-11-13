@@ -37,3 +37,10 @@ end
 
 sum(10 5 3)
 
+_ext_ putchard(char)
+
+def testLoop(x)
+  for i = 1, i < x, 1 in putchard(100)
+end
+
+testLoop(4)

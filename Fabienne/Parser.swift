@@ -27,9 +27,11 @@ public enum ParsingError: Error {
 
  expression        : [ primaryExpression (binaryOperator primaryExpression)* ]
  
- primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression ]
+ primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression, loopExpression ]
  
- ifExpression      : if expression then expression else expression
+ loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression ]
+ 
+ ifExpression      : 'if' expression 'then' expression 'else' expression
  
  callExpression    : identifier '(' expression ')'
  
@@ -45,6 +47,7 @@ struct Parser {
     var tokens: [Token]
     var index = 0
     let operatorPrecedence: [String: Int] = [
+        "=": 5,
         "<": 10,
         "+": 20,
         "-": 20,
@@ -159,11 +162,48 @@ struct Parser {
             return iden
         case ._if:
             return try ifExpression()
+        case ._for:
+            return try loopExpression()
         case .prefix:
             return try callExternExpression()
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
         }
+    }
+    
+    // loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression ]
+    mutating func loopExpression() throws -> Expression {
+        _ = popCurrentToken() // Removing 'for'
+        
+        guard case let Token.identifier(varName) = popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier ")
+        }
+        
+        guard Token._operator("=") == popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier: = ")
+        }
+        
+        let startExpr = try expression()
+        
+        guard Token.comma == popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier: , ")
+        }
+        
+        let endExpr = try expression()
+        
+        guard Token.comma == popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier: , ")
+        }
+        
+        let stepExpr = try expression()
+        
+        guard Token._in == popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier: , ")
+        }
+        
+        let bodyExpr = try expression()
+        
+       return .loopExpr(varName: varName, startExpr: startExpr, endExpr: endExpr, stepExpr: stepExpr, bodyExpr: bodyExpr)
     }
     
     /// callExternExpression : prefix callExpression

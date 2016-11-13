@@ -4,8 +4,10 @@ Dir.chdir("../")
 system "set -o pipefail && xcodebuild test -scheme Fabienne | xcpretty -t"  or raise "INTERNAL TESTS FAILED"
 
 result = `xcodebuild -configuration Release BUILD_DIR=$PWD/build/`
-result = `./build/Release/Fabienne ./build/Release/Fabienne --file ./Tests/input_tests.fab`
+result = `./build/Release/Fabienne --file ./Tests/input_tests.fab`
 $results = result.split(" ")
+
+puts $results
 
 class IntegrationTestsFromFile < Test::Unit::TestCase
   def test_1
@@ -34,6 +36,13 @@ class IntegrationTestsFromFile < Test::Unit::TestCase
 
   def test_sum
     assert $results[6] == "18"
+  end
+
+  def test_loop
+    assert $results[7] == "d"
+    assert $results[8] == "d"
+    assert $results[9] == "d"
+    assert $results[10] == "0"
   end
 end
 

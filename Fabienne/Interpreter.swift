@@ -81,6 +81,8 @@ public struct Interpreter {
             guard let num = result else { throw InterpreterError.undefinedVariable } // Unbound is better
             
             return num
+        case .loopExpr:
+            throw InterpreterError.undefinedToken
         }
     }
     
