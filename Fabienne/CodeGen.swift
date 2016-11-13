@@ -87,7 +87,7 @@ extension Expression: IRBuilder {
     func codeGenerate(context: inout Context, module: ModuleProvider) throws -> IRResult {
         switch self {
         case .literalExpr(let num):
-            return LLVMConstInt(context.type, UInt64(num), 0)
+            return LLVMConstInt(context.type, UInt64(Int64(num)), 0)
         case .variableExpr(let variable):
             
             if let value = context.namedValues[variable] {
@@ -135,7 +135,7 @@ extension Expression: IRBuilder {
                 incomingBlocks.deallocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride * 2)
                 incomingValues.deallocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride * 2)
             }
-        
+            
             return phi
         case .callExpr(let funName, let exprs):
             guard let function = module.function(name: funName) else { throw CodeGenErrors.unknownFunction }
@@ -173,6 +173,75 @@ extension Expression: IRBuilder {
             default:
                 throw CodeGenErrors.undefinedOperator
             }
+        case .loopExpr(varName: let name, startExpr: let start, endExpr: let end, stepExpr: let step, bodyExpr: let body):
+            
+            let startValue = try start.codeGenerate(context: &context, module: module)
+            
+            let preheaderBlock = LLVMGetInsertBlock(context.builder)
+            let function = LLVMGetBasicBlockParent(preheaderBlock)
+            
+            let preLoopBlock = LLVMAppendBasicBlockInContext(context.context, function, "preloop")
+            LLVMBuildBr(context.builder, preLoopBlock)
+            
+            LLVMPositionBuilderAtEnd(context.builder, preLoopBlock)
+            
+            let variable = LLVMBuildPhi(context.builder, context.type, name)
+            
+            let incomingValues = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: MemoryLayout<LLVMValueRef>.stride)
+            
+            incomingValues.initialize(from: [startValue])
+            let incomingBlocks = UnsafeMutablePointer<LLVMBasicBlockRef?>.allocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride)
+            
+            incomingBlocks.initialize(from: [preheaderBlock])
+            
+            defer {
+                incomingValues.deallocate(capacity: MemoryLayout<LLVMValueRef>.stride)
+                incomingBlocks.deallocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride)
+            }
+            
+            let oldValue = context.namedValues[name]
+            
+            context.namedValues[name] = variable
+            
+            LLVMAddIncoming(variable, incomingValues, incomingBlocks, 1)
+            
+            let endValue = try end.codeGenerate(context: &context, module: module)
+            let zero = LLVMConstInt(context.type, UInt64(0), 0)
+            let endCond = LLVMBuildICmp(context.builder, LLVMIntNE, endValue, zero, "loopcond")
+            
+            let afterBlock = LLVMAppendBasicBlockInContext(context.context, function, "afterloop")
+            let loopBlock = LLVMAppendBasicBlockInContext(context.context, function, "loop")
+            
+            LLVMBuildCondBr(context.builder, endCond, loopBlock, afterBlock)
+            
+            LLVMPositionBuilderAtEnd(context.builder, loopBlock)
+            _ = try body.codeGenerate(context: &context, module: module)
+            
+            let stepValue = try step.codeGenerate(context: &context, module: module)
+            
+            let nextValue = LLVMBuildAdd(context.builder, variable, stepValue, "nextvar")
+            let loopEndBlock = LLVMGetInsertBlock(context.builder)
+            
+            let incomingValueNext = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: MemoryLayout<LLVMValueRef>.stride)
+            incomingValueNext.initialize(from: [nextValue])
+            
+            let incomingBlockLoopEnd = UnsafeMutablePointer<LLVMBasicBlockRef?>.allocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride)
+            incomingBlockLoopEnd.initialize(from: [loopEndBlock])
+            
+            defer {
+                incomingValueNext.deallocate(capacity: MemoryLayout<LLVMValueRef>.stride)
+                incomingBlockLoopEnd.deallocate(capacity: MemoryLayout<LLVMBasicBlockRef>.stride)
+            }
+            
+            LLVMAddIncoming(variable, incomingValueNext, incomingBlockLoopEnd, 1)
+            
+            LLVMBuildBr(context.builder, preLoopBlock)
+            LLVMPositionBuilderAtEnd(context.builder, afterBlock)
+            
+            context.namedValues.removeValue(forKey: name)
+            context.namedValues[name] = oldValue
+            
+            return zero
         }
     }
 }

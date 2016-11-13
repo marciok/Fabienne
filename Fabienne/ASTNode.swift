@@ -18,6 +18,7 @@ public indirect enum Expression {
     case variableExpr(String)
     case binaryExpr(String, Expression, Expression)
     case callExpr(String, [Expression])
+    case loopExpr(varName: String, startExpr: Expression, endExpr: Expression, stepExpr: Expression, bodyExpr: Expression)
     case conditionalExpr(condExpr: Expression, thenExpr:
         Expression, elseExpression: Expression)
 }
@@ -72,6 +73,8 @@ extension Expression: CustomStringConvertible {
             return String(num)
         case .variableExpr(let variable):
             return variable
+        case .loopExpr(varName: let name, startExpr: let start, endExpr: let end, stepExpr: let step, bodyExpr: let body):
+            return name + " " + start.description + " " + step.description + " " + end.description + " " + body.description
         case .callExpr(let iden, let expr):
             return iden + expr.description
         case .conditionalExpr(condExpr: let cond, thenExpr: let thenExpr, elseExpression:let elseExpr):

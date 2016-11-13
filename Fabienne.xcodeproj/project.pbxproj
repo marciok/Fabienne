@@ -12,6 +12,7 @@
 		57703C751DC007C000FF331B /* CodeGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C731DC007C000FF331B /* CodeGen.swift */; };
 		57703C761DC007C000FF331B /* JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57703C741DC007C000FF331B /* JIT.swift */; };
 		577985FB1DBA9F970052173F /* CodeGenTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577985FA1DBA9F970052173F /* CodeGenTest.swift */; };
+		5779D7781DD64AF6003D5E33 /* fabstdlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5779D7771DD64AF6003D5E33 /* fabstdlib.c */; };
 		57893BFC1DBA713100F24E55 /* ASTNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C52FA1DABD5E10069EF9B /* ASTNode.swift */; };
 		57893BFD1DBA8AFA00F24E55 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
 		57893BFE1DBA8AFB00F24E55 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575C53011DABDFDB0069EF9B /* StringExtensions.swift */; };
@@ -56,6 +57,7 @@
 		57703C731DC007C000FF331B /* CodeGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CodeGen.swift; path = Fabienne/CodeGen.swift; sourceTree = "<group>"; };
 		57703C741DC007C000FF331B /* JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JIT.swift; path = Fabienne/JIT.swift; sourceTree = "<group>"; };
 		577985FA1DBA9F970052173F /* CodeGenTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeGenTest.swift; sourceTree = "<group>"; };
+		5779D7771DD64AF6003D5E33 /* fabstdlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fabstdlib.c; sourceTree = "<group>"; };
 		577C0FE01D9C59CE005B7B06 /* Fabienne */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Fabienne; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -116,6 +118,7 @@
 		577C0FD71D9C59CD005B7B06 = {
 			isa = PBXGroup;
 			children = (
+				5779D7771DD64AF6003D5E33 /* fabstdlib.c */,
 				57965A311DBFDBCD00D6A7E6 /* Driver */,
 				57893C0A1DBA91A000F24E55 /* LLVM */,
 				576F57351DA81EC300421112 /* Utils */,
@@ -217,6 +220,7 @@
 					};
 					577C0FDF1D9C59CD005B7B06 = {
 						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 0810;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -276,6 +280,7 @@
 				57703C761DC007C000FF331B /* JIT.swift in Sources */,
 				57893C091DBA8B1E00F24E55 /* main.swift in Sources */,
 				57893C041DBA8B0800F24E55 /* Parser.swift in Sources */,
+				5779D7781DD64AF6003D5E33 /* fabstdlib.c in Sources */,
 				57703C721DC007A800FF331B /* Driver.swift in Sources */,
 				57703C751DC007C000FF331B /* CodeGen.swift in Sources */,
 				57893C031DBA8B0400F24E55 /* ASTNode.swift in Sources */,
@@ -448,6 +453,7 @@
 		577C0FE81D9C59CE005B7B06 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -456,6 +462,7 @@
 					__STDC_CONSTANT_MACROS,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
@@ -466,6 +473,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Fabienne;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/include $(LLVM_SOURCE_DIR)/include";
 			};
@@ -474,8 +482,10 @@
 		577C0FE91D9C59CE005B7B06 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(LLVM_BUILD_DIR)/lib";
 				LLVM_BUILD_DIR = "$HOME/Projects/llvm-experiments/my-llvm-build";
 				LLVM_SOURCE_DIR = "$HOME/Projects/llvm-experiments/llvm";
