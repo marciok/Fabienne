@@ -31,11 +31,11 @@ end
 
 fib(10)
 
-def sum(x y z)
+def sum(x, y, z)
   x + y + z
 end
 
-sum(10 5 3)
+sum(10, 5, 3)
 
 _ext_ putchard(char)
 

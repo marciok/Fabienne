@@ -274,12 +274,21 @@ struct Parser {
         }
         
         var expressions: [Expression] = []
-        while try peekCurrentToken() != .parensClose {
+        commaParseLoop: while try peekCurrentToken() != .parensClose {
             let expression = try self.expression()
             expressions.append(expression)
+            
+            switch try peekCurrentToken() {
+            case .comma:
+                _ = popCurrentToken() // Removing comma
+                continue
+            case .parensClose:
+                _ = popCurrentToken() // Removing parensClose
+                break commaParseLoop
+            default:
+                throw ParsingError.invalidTokens(expecting: "Expecting: , or )")
+            }
         }
-        
-        _ = popCurrentToken() // Removing ')'
         
         return .callExpr(id, expressions)
     }
@@ -301,18 +310,23 @@ struct Parser {
             case .identifier:
                 
                 var args: [String] = []
-                while case let .identifier(id) = try peekCurrentToken() {
+                commaParseLoop: while case let .identifier(id) = popCurrentToken() {
                     args.append(id)
-                    _ = popCurrentToken() // Removing variable
+                    
+                    switch try peekCurrentToken() {
+                    case .comma:
+                        _ = popCurrentToken() // Removing comma
+                        continue
+                    case .parensClose:
+                        _ = popCurrentToken() // Removing ')'
+                        break commaParseLoop
+                    default:
+                        throw ParsingError.invalidTokens(expecting: "Expecting: , or )")
+                    }
                 }
                 
                 protoNode.args = args
                 
-                if try peekCurrentToken() != .parensClose {
-                    throw ParsingError.invalidTokens(expecting: "Expecting: )")
-                }
-                
-                _ = popCurrentToken() // Removing ')'
                 return protoNode
             case .parensClose:
                 _ = popCurrentToken() // Removing ')'
