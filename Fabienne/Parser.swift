@@ -21,7 +21,7 @@ public enum ParsingError: Error {
  
  declaration       : prefix prototype
  
- definition        : def prototype expression end
+ definition        : 'def' prototype expression 'end'
  
  prototype         : identifier '(' [identifier] ')'
 
@@ -29,7 +29,7 @@ public enum ParsingError: Error {
  
  primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression, loopExpression ]
  
- loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression ]
+ loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression  'end']
  
  ifExpression      : 'if' expression 'then' expression 'else' expression
  
@@ -171,7 +171,7 @@ struct Parser {
         }
     }
     
-    // loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression ]
+    // loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression 'end' ]
     mutating func loopExpression() throws -> Expression {
         _ = popCurrentToken() // Removing 'for'
         
@@ -202,6 +202,10 @@ struct Parser {
         }
         
         let bodyExpr = try expression()
+        
+        guard Token.end == popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier: end ")
+        }
         
        return .loopExpr(varName: varName, startExpr: startExpr, endExpr: endExpr, stepExpr: stepExpr, bodyExpr: bodyExpr)
     }
@@ -330,11 +334,10 @@ struct Parser {
         let proto = try prototype()
         let body = try expression()
         
-        if try peekCurrentToken() != .definitionEnd {
+        if popCurrentToken() != .end {
             throw ParsingError.invalidTokens(expecting: "Expecting: end")
         }
         
-        _ = popCurrentToken() // Removing 'end'
         let function = Function(prototype: proto, body: body)
         
         return function

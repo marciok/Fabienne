@@ -16,7 +16,7 @@ public enum Token {
     case prefix(String)
     case identifier(String)
     case definitionBegin
-    case definitionEnd
+    case end
     case comma
     case _for
     case _in
@@ -39,7 +39,7 @@ public enum Token {
             return String(id)
         case .definitionBegin:
             return "def"
-        case .definitionEnd:
+        case .end:
             return "end"
         case ._if:
             return "if"
@@ -82,8 +82,8 @@ public struct Lexer {
                 switch $0 {
                 case Token.definitionBegin.rawValue():
                     return .definitionBegin
-                case Token.definitionEnd.rawValue():
-                    return .definitionEnd
+                case Token.end.rawValue():
+                    return .end
                 case Token._if.rawValue():
                     return ._if
                 case Token._else.rawValue():

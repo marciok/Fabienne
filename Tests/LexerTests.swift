@@ -40,7 +40,7 @@ class LexerTests: XCTestCase {
     }
     
     func test_lexerForDefinitions() {
-        let expectedTokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), ._operator("+"), .identifier("x"), .definitionEnd]
+        let expectedTokens: [Token] = [.definitionBegin, .identifier("foo"), .parensOpen,  .identifier("x"),  .parensClose, .number(1), ._operator("+"), .identifier("x"), .end]
         let tokens = Lexer.tokenize(string: "def foo(x) 1+x end")
         
         XCTAssertTrue(tokens.count == expectedTokens.count)
