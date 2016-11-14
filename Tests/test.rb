@@ -7,8 +7,6 @@ result = `xcodebuild -configuration Release BUILD_DIR=$PWD/build/`
 result = `./build/Release/Fabienne --file ./Tests/input_tests.fab`
 $results = result.split(" ")
 
-puts $results
-
 class IntegrationTestsFromFile < Test::Unit::TestCase
   def test_1
     assert $results[0] == "36"
