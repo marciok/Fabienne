@@ -75,7 +75,7 @@ public struct Lexer {
         
         let tokensGenerator: [(String, TokenGenerator)] = [
             ("\\(", { _ in .parensOpen }),
-            ("[ ]", { _ in nil }),
+            ("#.*", { _ in nil }),
             ("[,]", { _ in .comma }),
             ("_[a-z]*_\\s", { .prefix($0) }), //TODO: will have to change once there're more then one type
             ("[a-zA-Z][a-zA-Z0-9]*", {
