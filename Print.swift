@@ -8,9 +8,17 @@
 
 import Foundation
 
-@_silgen_name("putchard")
-public func putchard(char: Int) -> Int {
-    print(Character(UnicodeScalar(char)!))
+@_silgen_name("printd")
+public func printd(char: Int) -> Int {
+    print("> \(char) <")
     
     return char
 }
+
+@_silgen_name("putchard")
+public func putchard(char: Int) -> Int {
+    print(Character(UnicodeScalar(char)!), terminator: "")
+    
+    return char
+}
+

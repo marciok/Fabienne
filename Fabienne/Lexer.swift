@@ -23,6 +23,9 @@ public enum Token {
     case _if
     case then
     case _else
+    case binary
+    case unary
+    case defOperator
     
     func rawValue() -> String {
         
@@ -55,6 +58,12 @@ public enum Token {
             return name
         case ._else:
             return "else"
+        case .binary:
+            return "binary"
+        case .unary:
+            return "unary"
+        case .defOperator:
+            return "operator"
         }
     }
     
@@ -94,6 +103,12 @@ public struct Lexer {
                     return ._for
                 case Token._in.rawValue():
                     return ._in
+                case Token.binary.rawValue():
+                    return .binary
+                case Token.unary.rawValue():
+                    return .unary
+                case Token.defOperator.rawValue():
+                    return .defOperator
                 default:
                     return .identifier($0)
                 }

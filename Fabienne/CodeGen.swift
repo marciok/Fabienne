@@ -11,11 +11,11 @@ import LLVM_C
 
 enum CodeGenErrors : Error {
     case emptyAST
-    case unknownFunction
+    case unknownFunction(String)
     case functionAlreadyDefined
     case variableNotDeclared
     case undefinedOperator
-    case numberOfArgsDoNotMatch
+    case numberOfArgsDoNotMatch(String)
 }
 
 struct Context {
@@ -138,9 +138,9 @@ extension Expression: IRBuilder {
             
             return phi
         case .callExpr(let funName, let exprs):
-            guard let function = module.function(name: funName) else { throw CodeGenErrors.unknownFunction }
+            guard let function = module.function(name: funName) else { throw CodeGenErrors.unknownFunction(funName) }
             
-            if LLVMCountParams(function) != UInt32(exprs.count) { throw CodeGenErrors.numberOfArgsDoNotMatch }
+            if LLVMCountParams(function) != UInt32(exprs.count) { throw CodeGenErrors.numberOfArgsDoNotMatch("\(funName) expecting: \(LLVMCountParams(function)) but got: \(exprs.count)") }
             
             var argValues: [IRResult] = []
             for expr in exprs {
@@ -171,7 +171,19 @@ extension Expression: IRBuilder {
                 
                 return LLVMBuildFPToSI(context.builder, cmp2, context.type, "booltmp")
             default:
-                throw CodeGenErrors.undefinedOperator
+                let name = "binary" + op
+                guard let function = module.function(name: name) else {
+                    throw CodeGenErrors.undefinedOperator
+                }
+                
+                let args = [lhsResult, rhsResult]
+                
+                let argPointer = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: args.count)
+                argPointer.initialize(from: args)
+                
+                defer { argPointer.deallocate(capacity: args.count) }
+                
+                return LLVMBuildCall(context.builder, function, argPointer, UInt32(args.count), "binop")
             }
         case .loopExpr(varName: let name, startExpr: let start, endExpr: let end, stepExpr: let step, bodyExpr: let body):
             
@@ -242,6 +254,18 @@ extension Expression: IRBuilder {
             context.namedValues[name] = oldValue
             
             return zero
+        case .unaryExpr(let op, let expr):
+            let name = "unary" + op
+            guard let function = module.function(name: name) else { throw  CodeGenErrors.unknownFunction(name) }
+            
+            let operand = try expr.codeGenerate(context: &context, module: module)
+            
+            let argPointer = UnsafeMutablePointer<LLVMValueRef?>.allocate(capacity: 1)
+            argPointer.initialize(from: [operand])
+            
+            defer { argPointer.deallocate(capacity: 1) }
+            
+            return LLVMBuildCall(context.builder, function, argPointer, 1, "unnop")
         }
     }
 }

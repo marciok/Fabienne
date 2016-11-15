@@ -11,4 +11,9 @@ import Foundation
 let args = CommandLine.arguments
 let option = try! DriverOption(arguments: args)
 
-try! Driver.mainLoop(option)
+do {
+    try Driver.mainLoop(option)
+} catch let error {
+    print("\u{001B}[0;31m Error: \(error) \u{001B}[0m")
+    exit(EXIT_FAILURE)
+}

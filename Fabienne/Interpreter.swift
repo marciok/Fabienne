@@ -83,6 +83,8 @@ public struct Interpreter {
             return num
         case .loopExpr:
             throw InterpreterError.undefinedToken
+        case .unaryExpr:
+            throw InterpreterError.undefinedToken
         }
     }
     

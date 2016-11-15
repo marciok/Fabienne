@@ -8,8 +8,15 @@
 
 import Foundation
 
+public enum FunctionType {
+    case normal
+    case binary(String, Int)
+    case unary(String)
+}
+
 public struct Prototype {
     let name: String
+    let funType: FunctionType
     var args: [String] = []
 }
 
@@ -18,6 +25,7 @@ public indirect enum Expression {
     case variableExpr(String)
     case binaryExpr(String, Expression, Expression)
     case callExpr(String, [Expression])
+    case unaryExpr(String, Expression)
     case loopExpr(varName: String, startExpr: Expression, endExpr: Expression, stepExpr: Expression, bodyExpr: Expression)
     case conditionalExpr(condExpr: Expression, thenExpr:
         Expression, elseExpression: Expression)
@@ -80,6 +88,8 @@ extension Expression: CustomStringConvertible {
         case .conditionalExpr(condExpr: let cond, thenExpr: let thenExpr, elseExpression:let elseExpr):
             
             return "if \(cond) then \(thenExpr) else \(elseExpr)"
+        case .unaryExpr(let op, let expr):
+            return op + " " + expr.description
         }
         
     }

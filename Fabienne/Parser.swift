@@ -15,7 +15,7 @@ public enum ParsingError: Error {
 /**
  Parse Grammar:
  
- program           : [definition | expression]*;
+ program           : [statement | expression]*;
  
  statement         : [declaration | definition];
  
@@ -23,11 +23,13 @@ public enum ParsingError: Error {
  
  definition        : 'def' prototype expression 'end'
  
- prototype         : identifier '(' [identifier] ')'
+ prototype         : [identifier | 'operator' op [binary num | unary] ]'(' [identifier] ')'
 
  expression        : [ primaryExpression (binaryOperator primaryExpression)* ]
  
- primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression, loopExpression ]
+ primaryExpression : [ number | identifier | callExpression | '(' expression ')' | ifExpression | loopExpression, unaryExpression ]
+ 
+ unaryExpression   : op primaryExpression
  
  loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression  'end']
  
@@ -42,18 +44,18 @@ public enum ParsingError: Error {
  identifer         : [aZ-0..9]
  
  */
+var operatorPrecedence: [String: Int] = [
+    "=": 5,
+    "<": 10,
+    "+": 20,
+    "-": 20,
+    "*": 40,
+    "/": 40
+]
 struct Parser {
     
     var tokens: [Token]
     var index = 0
-    let operatorPrecedence: [String: Int] = [
-        "=": 5,
-        "<": 10,
-        "+": 20,
-        "-": 20,
-        "*": 40,
-        "/": 40
-    ]
     
     init(tokens: [Token]) {
         self.tokens = tokens
@@ -126,7 +128,7 @@ struct Parser {
         }
     }
     
-    /// primaryExpression : [ number | identifier | callExpression | callExternExpression | '(' expression ')' | ifExpression ]
+    /// primaryExpression : [ number | identifier | callExpression | callExternExpression | '(' expression ')' | ifExpression | loopExpression | unaryExpression]
     mutating func primaryExpression() throws -> Expression {
         let currentToken = try peekCurrentToken()
         
@@ -166,9 +168,23 @@ struct Parser {
             return try loopExpression()
         case .prefix:
             return try callExternExpression()
+        case ._operator:
+           return try unaryExpression()
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting number or another expression")
         }
+    }
+    
+    // unaryExpression : op primaryExpression
+    mutating func unaryExpression() throws -> Expression {
+        
+        guard case let Token._operator(op) = popCurrentToken() else {
+            throw ParsingError.invalidTokens(expecting: "Expecting operator")
+        }
+        
+        let primExpression = try primaryExpression()
+        
+        return .unaryExpr(op, primExpression)
     }
     
     // loopExpression    : [ 'for' identifier '=' expression ',' expression ',' expression? 'in' expression 'end' ]
@@ -293,53 +309,80 @@ struct Parser {
         return .callExpr(id, expressions)
     }
     
-    ///    prototype         : identifier '(' [identifier] ')'
+    //prototype         : [identifier | 'operator' op [binary num | unary] ]'(' [identifier] ')'
     mutating func prototype() throws -> Prototype {
+        
+        let funType: FunctionType
+        let name: String
+        
+        switch try peekCurrentToken() {
+        case .defOperator:
+            _ = popCurrentToken() // Removing 'operator' 
+            
+            guard case let Token._operator(op) = popCurrentToken() else {
+                throw ParsingError.invalidTokens(expecting: "expecting operator")
+            }
+            
+            switch try peekCurrentToken() {
+            case .unary:
+                _ = popCurrentToken() // Remove unary
+                
+                name = "unary" + op
+                funType = FunctionType.unary(op)
+                
+            case .binary:
+                _ = popCurrentToken() // Remove binary
+                
+                name = "binary" + op
+                
+                guard case let Token.number(n) = popCurrentToken() else {
+                    throw ParsingError.invalidTokens(expecting: "expecting number")
+                }
+                
+                funType = FunctionType.binary(op, n)
+            default:
+                throw ParsingError.invalidTokens(expecting: "expecing: binary or unary")
+            }
+        case .identifier(let iden):
+            _ = popCurrentToken() // Remove identifier
+            
+            funType = FunctionType.normal
+            name = iden
+        default:
+            throw ParsingError.invalidTokens(expecting: "Expecting identifier or operator")
+        }
+        
+        if popCurrentToken() != .parensOpen {
+            throw ParsingError.invalidTokens(expecting: "Expecting: (")
+        }
+        
+        var args: [String] = []
         
         switch try peekCurrentToken() {
         case .identifier:
-            var protoNode = Prototype(name: popCurrentToken().rawValue(), args: [])
             
-            if try peekCurrentToken() != .parensOpen {
-                throw ParsingError.invalidTokens(expecting: "Expecting: (")
-            }
-            
-            _ = popCurrentToken() // Removing '('
-            
-            switch try peekCurrentToken() {
-            case .identifier:
+            commaParseLoop: while case let .identifier(id) = popCurrentToken() {
+                args.append(id)
                 
-                var args: [String] = []
-                commaParseLoop: while case let .identifier(id) = popCurrentToken() {
-                    args.append(id)
-                    
-                    switch try peekCurrentToken() {
-                    case .comma:
-                        _ = popCurrentToken() // Removing comma
-                        continue
-                    case .parensClose:
-                        _ = popCurrentToken() // Removing ')'
-                        break commaParseLoop
-                    default:
-                        throw ParsingError.invalidTokens(expecting: "Expecting: , or )")
-                    }
+                switch try peekCurrentToken() {
+                case .comma:
+                    _ = popCurrentToken() // Removing comma
+                    continue
+                case .parensClose:
+                    _ = popCurrentToken() // Removing ')'
+                    break commaParseLoop
+                default:
+                    throw ParsingError.invalidTokens(expecting: "Expecting: , or )")
                 }
-                
-                protoNode.args = args
-                
-                return protoNode
-            case .parensClose:
-                _ = popCurrentToken() // Removing ')'
-                
-                return protoNode
-            default:
-                throw ParsingError.invalidTokens(expecting: "Expecting identifier")
             }
             
+        case .parensClose:
+            _ = popCurrentToken() // Removing ')'
         default:
             throw ParsingError.invalidTokens(expecting: "Expecting identifier")
         }
         
+        return Prototype(name: name, funType: funType, args: args)
     }
     
     /// definition        : def prototype expression end
@@ -347,6 +390,10 @@ struct Parser {
         _ = popCurrentToken() // Removing 'def'
         let proto = try prototype()
         let body = try expression()
+        
+        if case let .binary(op, precedence) = proto.funType {
+            operatorPrecedence[op] = precedence
+        }
         
         if popCurrentToken() != .end {
             throw ParsingError.invalidTokens(expecting: "Expecting: end")
@@ -395,7 +442,7 @@ struct Parser {
             default:
                 let expr = try expression()
                 //Create lambda
-                let proto = Prototype(name: "", args: [])
+                let proto = Prototype(name: "", funType: .normal, args: [])
                 let lambda = Function(prototype: proto, body: expr)
                 
                 nodes.append(ASTNode.functionNode(lambda))
