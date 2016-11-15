@@ -25,7 +25,7 @@ class IntegrationTestsFromFile < Test::Unit::TestCase
   end
 
   def test_ext_predicated
-    assert $results[4] == "0"
+    assert $results[4] == "1"
   end
 
   def test_fibonacci
@@ -37,10 +37,12 @@ class IntegrationTestsFromFile < Test::Unit::TestCase
   end
 
   def test_loop
-    assert $results[7] == "d"
-    assert $results[8] == "d"
-    assert $results[9] == "d"
-    assert $results[10] == "0"
+    assert $results[7] == "ddd0"
+  end
+
+  def test_used_def_operators
+    assert $results[8] = "18"
+    assert $results[9] = "0"
   end
 end
 

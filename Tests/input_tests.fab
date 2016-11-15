@@ -47,3 +47,25 @@ def testLoop(x)
 end
 
 testLoop(4)
+
+def operator ! unary(v)
+if v then 
+  0
+else 
+  1 
+end
+
+def operator > binary 10 (lhs, rhs) 
+  rhs < lhs
+end
+
+def testBinOperator(x)
+  if x < 8 then
+    8
+  else
+    18
+end
+
+testBinOperator(10)
+(! testBinOperator(10))
+

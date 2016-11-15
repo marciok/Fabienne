@@ -23,7 +23,7 @@ class CodeGenTest: XCTestCase {
 
     func testSimpleExpression() {
         let binExpr = Expression.binaryExpr("+", .literalExpr(1), .literalExpr(2))
-        let proto = Prototype(name: "", args: [])
+        let proto = Prototype(name: "", funType: .normal, args: [])
         let lambda = Function(prototype: proto, body: binExpr)
         let ast = ASTNode.functionNode(lambda)
         var ctx = Context.global()
@@ -38,7 +38,7 @@ class CodeGenTest: XCTestCase {
     }
     
     func testDefinition() {
-        let proto = Prototype(name: "foo", args: ["x"])
+        let proto = Prototype(name: "foo", funType: .normal, args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let definition = Function(prototype: proto, body: body)
         let ast = ASTNode.functionNode(definition)
@@ -55,11 +55,11 @@ class CodeGenTest: XCTestCase {
     }
     
     func testDefinitionCall() {
-        let proto = Prototype(name: "foo", args: ["x"])
+        let proto = Prototype(name: "foo", funType: .normal, args: ["x"])
         let body = Expression.binaryExpr("+", .literalExpr(1), .variableExpr("x"))
         let definition = Function(prototype: proto, body: body)
         
-        let protoLambda = Prototype(name: "", args: ["x"])
+        let protoLambda = Prototype(name: "", funType: .normal, args: ["x"])
         let callExpr = Expression.callExpr("foo", [.binaryExpr("+", .literalExpr(1), .literalExpr(1))])
         let lambda = Function(prototype: protoLambda, body: callExpr)
 
